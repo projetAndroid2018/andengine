@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level width="140000" height="780">	
+	<entity x="100" y="100" type="platform1"/>
+	<entity x="250" y="100" type="platform1"/>
+	<entity x="250" y="140" type="trap"/>
+	<entity x="400" y="100" type="platform1"/>
+	<entity x="550" y="100" type="platform1"/>
+	<entity x="700" y="100" type="platform1"/>
+	<entity x="400" y="145" type="destructibleBloc"/>
+	<entity x="400" y="175" type="destructibleBloc"/>
+</level>
