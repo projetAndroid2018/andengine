@@ -19,9 +19,9 @@ public class MovingYPlatform extends Sprite
 	private float shiftY;
 	private float initialY;
 
-	public MovingYPlatform(float pX, float pY, float shiftY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld, ITextureRegion texture)
+	public MovingYPlatform(float pX, float pY, float width, float height, float shiftY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld, ITextureRegion texture)
 	{
-		super(pX, pY, texture, vbo);
+		super(pX, pY, width, height, texture, vbo);
 		createPhysics(camera, physicsWorld);
 		initialY = pY;
 		this.shiftY = shiftY;

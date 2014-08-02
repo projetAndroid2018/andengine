@@ -11,5 +11,7 @@
 	<entity x="400" y="140" type="coin"/>
 	<entity x="700" y="140" type="coin"/>
 	<entity x="250" y="150" type="enemy1"/>
+	<entity x="400" y="140" type="trap"/>
+	<entity x="700" y="140" type="trap"/>
 	
 </level>

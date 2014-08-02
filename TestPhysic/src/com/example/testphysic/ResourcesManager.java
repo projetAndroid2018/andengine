@@ -50,6 +50,7 @@ public class ResourcesManager
 	
 	// Game Texture
 	public BuildableBitmapTextureAtlas gameTextureAtlas;
+	public BuildableBitmapTextureAtlas backgroundTextureAtlas;
 	
 	// Game Texture Regions
 	public ITextureRegion platform1_region;
@@ -61,6 +62,7 @@ public class ResourcesManager
 	public ITiledTextureRegion player_region;
 	public ITextureRegion bullet;
 	public ITextureRegion trapRegion;
+	public ITextureRegion backgroud;
 	public ITiledTextureRegion destructible_bloc;
 	
 	//ENNEMIS TEXTURE
@@ -158,14 +160,21 @@ public class ResourcesManager
         
         complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "end_level.png");
         complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "stars.png", 2, 1);
-
+        
+        backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+        backgroud = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "background.jpg");
+        
+        
+        
         loadEnnemiGraphics();
         
     	try 
     	{
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameTextureAtlas.load();
-		} 
+			this.backgroundTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.backgroundTextureAtlas.load();
+    	} 
     	catch (final TextureAtlasBuilderException e)
     	{
 			Debug.e(e);

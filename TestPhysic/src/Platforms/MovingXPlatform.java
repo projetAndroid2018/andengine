@@ -19,9 +19,9 @@ public class MovingXPlatform extends Sprite
 	private float shiftX;
 	private float initialX;
 
-	public MovingXPlatform(float pX, float pY, float shiftX, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld, ITextureRegion texture)
+	public MovingXPlatform(float pX, float pY, float width, float height, float shiftX, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld, ITextureRegion texture)
 	{
-		super(pX, pY, texture, vbo);
+		super(pX, pY, width, height, texture, vbo);
 		createPhysics(camera, physicsWorld);
 		initialX = pX;
 		this.shiftX = shiftX;

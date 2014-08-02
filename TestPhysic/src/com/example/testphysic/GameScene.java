@@ -12,7 +12,8 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.background.ParallaxBackground;
+import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
@@ -23,7 +24,6 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
-import org.andengine.util.adt.color.Color;
 import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
@@ -118,7 +118,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public static int numberJumps;
 	
 	//Number Kilometers
-	public static int numberKilometers;
+	public static float numberMeters;
+	public static float initialPosition;
 	
 	//Number Coins Collected
 	public static int numberCoinsCollected;
@@ -204,7 +205,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		SceneManager.getInstance().loadMenuScene(engine);
 	}
-
 	@Override
 	public SceneType getSceneType()
 	{
@@ -269,23 +269,23 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				
 				if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1))
 				{
-					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld, resourcesManager.platform1_region);
+					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform1_region);
 				} 
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2))
 				{
-					levelObject = new SemiStaticPlatform(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld, resourcesManager.platform2_region);
+					levelObject = new SemiStaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform2_region);
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
 				{
-					levelObject = new FragilePlatform(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld, resourcesManager.platform3_region);
+					levelObject = new FragilePlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform3_region);
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM4))
 				{
-					levelObject = new MovingXPlatform(x + ((levelToLoad-1) *800), y, 75, vbom, camera, physicsWorld, resourcesManager.platform4_region);					
+					levelObject = new MovingXPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform4_region);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM5))
 				{
-					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, 75, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
+					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN))
 				{
@@ -317,6 +317,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								if (!gameOverDisplayed)
 								{
 									displayGameOverText();
+									player.setVisible(false);
 									try { CheckBestStats(); } catch (NumberFormatException e) {} catch (IOException e) {}
 									try { UpdateGlobatStats();} catch (IOException e) {}
 									
@@ -377,6 +378,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								}
 							}
 						};
+						initialPosition = x;
 						levelObject = player;
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1))
@@ -421,7 +423,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				}
 				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DESTRUCTIBLE_BLOC))
 				{
-					levelObject = new DestructibleBlock(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld);
+					levelObject = new DestructibleBlock(x + ((levelToLoad-1) *800), y, 50, 50, vbom, camera, physicsWorld);
 				}
 				else
 				{
@@ -546,12 +548,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private void createBackground()
 	{
-		setBackground(new Background(Color.BLUE));
+		ParallaxBackground background = new ParallaxBackground(0, 0, 0);
+	    background.attachParallaxEntity(new ParallaxEntity(100, new Sprite(camera.getWidth() / 2, camera.getHeight() / 2, resourcesManager.backgroud, vbom)));
+	    setBackground(background);
 	}
 	
 	private void addToScore(int i)
 	{		
-		score = player.footContacts;
+		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10));
 		scoreText.setText("Score: " + score);
 	}
 	
@@ -778,7 +782,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		numberCoinsCollected = 0;
 		numberEnemiesDestroyed = 0;
 		numberJumps = 0;
-		numberKilometers = 0;
+		numberMeters = 0;
 		numberScenesLoaded = 1;
 		numberTrapsDestroyed = 0;
 		score = 0;
@@ -942,9 +946,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			resourcesManager.write(BEST_NUMBER_JUMPS_KEY, Integer.toString(numberJumps));
 		}
 		//Number Kilometers
-		if(numberKilometers > Integer.parseInt(resourcesManager.read(BEST_NUMBER_KILOMETERS_KEY)))
+		if(numberMeters > Float.parseFloat(resourcesManager.read(BEST_NUMBER_KILOMETERS_KEY)))
 		{
-			resourcesManager.write(BEST_NUMBER_KILOMETERS_KEY, Integer.toString(numberKilometers));
+			resourcesManager.write(BEST_NUMBER_KILOMETERS_KEY, Float.toString(numberMeters));
 		}
 		//Scenes Loaded
 		if(numberScenesLoaded > Integer.parseInt(resourcesManager.read(BEST_NUMBER_SCENES_LOADED_KEY)))
@@ -977,8 +981,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		final int getJumps = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_JUMPS_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_JUMPS_KEY, Integer.toString(getJumps + numberJumps));
 		//KILOMETERS
-		final int getKilometers = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_KILOMETERS_KEY));
-		resourcesManager.write(GLOBAL_NUMBER_KILOMETERS_KEY, Integer.toString(getKilometers + numberKilometers));
+		final float getMeters = Float.parseFloat(resourcesManager.read(GLOBAL_NUMBER_KILOMETERS_KEY));
+		resourcesManager.write(GLOBAL_NUMBER_KILOMETERS_KEY, Float.toString(getMeters + numberMeters));
 		//SCENES
 		final int getScenesLoaded = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_SCENES_LOADED_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_SCENES_LOADED_KEY, Integer.toString(getScenesLoaded + numberScenesLoaded));

@@ -19,9 +19,9 @@ public class DestructibleBlock extends AnimatedSprite
 	private Body body;
 	private boolean isBroken;
 	
-	public DestructibleBlock(float pX, float pY, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
+	public DestructibleBlock(float pX, float pY, float width, float height, VertexBufferObjectManager vbo, Camera camera, PhysicsWorld physicsWorld)
 	{
-		super(pX, pY, 50, 50, ResourcesManager.getInstance().destructible_bloc, vbo);
+		super(pX, pY, width, height, ResourcesManager.getInstance().destructible_bloc, vbo);
 		isBroken = false;
 		createPhysics(camera, physicsWorld);
 		

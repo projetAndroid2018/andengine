@@ -18,10 +18,10 @@ public class FragilePlatform extends Sprite
 {
 	private Body body;
 
-	public FragilePlatform(float pX, float pY, VertexBufferObjectManager vbo, Camera camera,
+	public FragilePlatform(float pX, float pY, float width, float height, VertexBufferObjectManager vbo, Camera camera,
 			PhysicsWorld physicsWorld, ITextureRegion texture)
 	{
-		super(pX, pY, texture, vbo);
+		super(pX, pY, width, height, texture, vbo);
 		createPhysics(camera, physicsWorld);
 	}
 	
