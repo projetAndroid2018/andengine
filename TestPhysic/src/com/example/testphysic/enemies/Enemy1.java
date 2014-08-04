@@ -88,6 +88,8 @@ public abstract class Enemy1 extends AnimatedSprite
 	
 	public void unloadEnemy1(PhysicsWorld physicsWorld) 
 	{
+		if(GameScene.player.footContacts > 1)
+			GameScene.player.footContacts--;
 	    body.setActive(false);
 	    SceneManager.getInstance().getCurrentScene().detachChild(this);
 	    physicsWorld.unregisterPhysicsConnector(

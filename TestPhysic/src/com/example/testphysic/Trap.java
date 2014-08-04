@@ -53,6 +53,10 @@ public class Trap extends Sprite
 	
 	private void unloadTrap(PhysicsWorld physicsWorld)
 	{
+		if(GameScene.player.footContacts > 1)
+		{
+			GameScene.player.footContacts--;
+		}
 		body.setActive(false);
 		SceneManager.getInstance().getCurrentScene().detachChild(this);
 		physicsWorld.unregisterPhysicsConnector(

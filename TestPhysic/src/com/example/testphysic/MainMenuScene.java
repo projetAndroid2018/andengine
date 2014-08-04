@@ -12,6 +12,7 @@ import org.andengine.engine.camera.Camera;
 
 import com.example.testphysic.SceneManager.SceneType;
 
+
 public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 {
 	//---------------------------------------------
@@ -22,7 +23,6 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 	
 	private final int MENU_PLAY = 0;
 	private final int MENU_OPTIONS = 1;
-	private final int MENU_STATS = 2;
 	
 	//---------------------------------------------
 	// METHODS FROM SUPERCLASS
@@ -63,10 +63,6 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 				SceneManager.getInstance().loadGameScene(engine);
 				return true;
 			case MENU_OPTIONS:
-				SceneManager.getInstance().createOptionScene();
-				return true;
-			case MENU_STATS:
-				SceneManager.getInstance().createStatScene();
 				return true;
 			default:
 				return false;
@@ -98,18 +94,15 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 		
 		final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, resourcesManager.play_region, vbom), 1.2f, 1);
 		final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_OPTIONS, resourcesManager.options_region, vbom), 1.2f, 1);
-		final IMenuItem statMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_STATS, resourcesManager.stat_region, vbom), 1.2f, 1);
 		
 		menuChildScene.addMenuItem(playMenuItem);
 		menuChildScene.addMenuItem(optionsMenuItem);
-		menuChildScene.addMenuItem(statMenuItem);
 		
 		menuChildScene.buildAnimations();
 		menuChildScene.setBackgroundEnabled(false);
 		
-		playMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 90);
-		optionsMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY()-10);
-		statMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 110);
+		playMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY());
+		optionsMenuItem.setPosition(engine.getCamera().getCenterX(), playMenuItem.getY() -( 11 * playMenuItem.getHeight() / 10));
 		
 		menuChildScene.setOnMenuItemClickListener(this);
 		

@@ -1,6 +1,8 @@
 package com.example.testphysic;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -39,7 +41,7 @@ public abstract class Player extends AnimatedSprite
 		super(pX, pY, ResourcesManager.getInstance().player_region, vbo);
 		createPhysics(camera, physicsWorld);
 		camera.setChaseEntity(this);
-		life = 3;
+		life = 10;
 		collides = false;
 	}
 	
@@ -51,7 +53,7 @@ public abstract class Player extends AnimatedSprite
 	{		
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
 		MassData md = new MassData();
-		md.mass = 1;
+		md.mass = 0.00000001f;
 		body.setMassData(md);
 		body.setUserData("player");
 		body.setFixedRotation(true);
@@ -63,20 +65,14 @@ public abstract class Player extends AnimatedSprite
 	        {
 				super.onUpdate(pSecondsElapsed);
 				camera.onUpdate(0.1f);
-				
-				if (getY() <= 0)
-				{					
+				GameScene.numberMeters = (getX() - GameScene.initialPosition) / 10;
+				if (getY() <= 0)				
 					onDie();
-				}
 				
 				if (canRun)
-				{	
 					body.setLinearVelocity(new Vector2(10, body.getLinearVelocity().y)); 
-				}
 				else
-				{
 					body.setLinearVelocity(new Vector2(0, body.getLinearVelocity().y));
-				}
 				
 				level();
 				checkLife();
@@ -100,17 +96,30 @@ public abstract class Player extends AnimatedSprite
 			return; 
 		}
 		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
+		
+		
+		SceneManager.getInstance().getCurrentScene().registerUpdateHandler(new 
+				TimerHandler(0.3f, true, new ITimerCallback() 
+				{
+					@Override
+					public void onTimePassed(final TimerHandler pTimerHandler) 
+					{
+						if(footContacts > 1)
+							footContacts--;
+					}
+
+				}));
 		GameScene.numberJumps++;
 	}
 	
 	public void increaseFootContacts()
 	{
-			footContacts++;
+		footContacts++;
 	}
 	
 	public void decreaseFootContacts()
-	{
-			footContacts--;
+	{	
+		footContacts--;
 	}
 	
 	public abstract void onDie();
