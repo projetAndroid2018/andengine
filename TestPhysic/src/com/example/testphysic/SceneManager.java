@@ -16,6 +16,9 @@ public class SceneManager
 	private BaseScene menuScene;
 	private BaseScene gameScene;
 	private BaseScene loadingScene;
+	private BaseScene optionScene;
+	private BaseScene statScene;
+	
 	
 	//---------------------------------------------
 	// VARIABLES
@@ -35,6 +38,8 @@ public class SceneManager
 		SCENE_MENU,
 		SCENE_GAME,
 		SCENE_LOADING,
+		SCENE_OPTION,
+		SCENE_STATS,
 	}
 	
 	//---------------------------------------------
@@ -64,9 +69,28 @@ public class SceneManager
 			case SCENE_LOADING:
 				setScene(loadingScene);
 				break;
+			case SCENE_OPTION:
+				setScene(optionScene);
+				break;
+			case SCENE_STATS:
+				setScene(statScene);
 			default:
 				break;
 		}
+	}
+	
+	public void createStatScene()
+	{
+		ResourcesManager.getInstance().loadStatResources();
+		statScene = new Stats();
+        SceneManager.getInstance().setScene(statScene);
+	}
+	
+	public void createOptionScene()
+	{
+		ResourcesManager.getInstance().loadOptionResources();
+		optionScene = new optionScene();
+        SceneManager.getInstance().setScene(optionScene);
 	}
 	
 	public void createMenuScene()
@@ -75,7 +99,6 @@ public class SceneManager
 		menuScene = new MainMenuScene();
 		loadingScene = new LoadingScene();
         SceneManager.getInstance().setScene(menuScene);
-        disposeSplashScene();
 	}
 	
 	public void createSplashScene(OnCreateSceneCallback pOnCreateSceneCallback)
@@ -83,6 +106,8 @@ public class SceneManager
 		ResourcesManager.getInstance().loadSplashScreen();
 		splashScene = new SplashScene();
 		currentScene = splashScene;
+		ResourcesManager.getInstance().loadMenuSoundResources();
+		ResourcesManager.getInstance().music_menu.play();
 		pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
 	}
 	
@@ -102,7 +127,12 @@ public class SceneManager
             public void onTimePassed(final TimerHandler pTimerHandler) 
             {
             	mEngine.unregisterUpdateHandler(pTimerHandler);
+            	
             	ResourcesManager.getInstance().loadGameResources();
+            	
+            	if (ResourcesManager.getInstance().music_menu.isPlaying())
+            	{ResourcesManager.getInstance().music_menu.pause();}
+            	ResourcesManager.getInstance().music_game.play();
         		gameScene = new GameScene();
         		setScene(gameScene);
             }
@@ -118,6 +148,10 @@ public class SceneManager
 		{
             public void onTimePassed(final TimerHandler pTimerHandler) 
             {
+            	if (ResourcesManager.getInstance().music_game.isPlaying())
+            	{ResourcesManager.getInstance().music_game.pause();}
+            	
+            	ResourcesManager.getInstance().music_menu.play();
             	mEngine.unregisterUpdateHandler(pTimerHandler);
             	ResourcesManager.getInstance().loadMenuTextures();
         		setScene(menuScene);

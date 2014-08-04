@@ -7,7 +7,6 @@ import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 
-
 public class LevelCompleteWindow extends Sprite
 {
 	private TiledSprite star1;

@@ -12,18 +12,20 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.ParallaxBackground;
-import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
+import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
+import org.andengine.extension.physics.box2d.PhysicsConnector;
+import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
+import org.andengine.util.adt.color.Color;
 import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
@@ -31,19 +33,14 @@ import org.andengine.util.level.simple.SimpleLevelLoader;
 import org.xml.sax.Attributes;
 
 
-import Platforms.DestructibleBlock;
-import Platforms.FragilePlatform;
-import Platforms.MovingXPlatform;
-import Platforms.MovingYPlatform;
-import Platforms.SemiStaticPlatform;
-import Platforms.StaticPlatform;
-
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.example.testphysic.LevelCompleteWindow.StarsCount;
 import com.example.testphysic.SceneManager.SceneType;
@@ -58,13 +55,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private PhysicsWorld physicsWorld;
 	private LevelCompleteWindow levelCompleteWindow;
 	
-	//TAG LOAD LEVEL
+	private int levelToLoad;
+	
 	private static final String TAG_ENTITY = "entity";
 	private static final String TAG_ENTITY_ATTRIBUTE_X = "x";
 	private static final String TAG_ENTITY_ATTRIBUTE_Y = "y";
 	private static final String TAG_ENTITY_ATTRIBUTE_TYPE = "type";
 	
-
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1 = "platform1";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2 = "platform2";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3 = "platform3";
@@ -75,9 +72,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1 = "enemy1";
-	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DESTRUCTIBLE_BLOC = "destructibleBloc";
 	
-	public static Player player;
+	public Player player;
 	
 	//HUD
 	private TiledSprite heart1;
@@ -87,15 +83,13 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static long[] animateArea = {100 , 0};
 	private static long[] animateArea2 = {0 ,100};
 	private static long[] animate;
-	private Rectangle rectangle;
 	
-	//GameOver Text
+	private Rectangle rectangle;
 	private Text gameOverText;
 	private boolean gameOverDisplayed = false;
 
-	//In Game
+	
 	private boolean firstTouch = false;
-	private int levelToLoad;
 	
 	//-------------------------------------------
 	//STATS && SCORE
@@ -118,8 +112,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public static int numberJumps;
 	
 	//Number Kilometers
-	public static float numberMeters;
-	public static float initialPosition;
+	public static int numberKilometers;
 	
 	//Number Coins Collected
 	public static int numberCoinsCollected;
@@ -179,7 +172,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//Score
 	public final static String GLOBAL_SCORE_KEY = "GSK";
 	
-		
+	
+
+	
 
 	
 	@Override
@@ -205,6 +200,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		SceneManager.getInstance().loadMenuScene(engine);
 	}
+
 	@Override
 	public SceneType getSceneType()
 	{
@@ -239,7 +235,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private void loadLevel(int levelID)
 	{
 		final SimpleLevelLoader levelLoader = new SimpleLevelLoader(vbom);
-		//final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+		
+		final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(0, 0.01f, 0.5f);
+		
 		
 		//CAMERA BOUNDS
 		levelLoader.registerEntityLoader(new EntityLoader<SimpleLevelEntityLoaderData>(LevelConstants.TAG_LEVEL)
@@ -269,23 +267,93 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				
 				if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1))
 				{
-					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform1_region);
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.platform1_region, vbom);
+					final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF);
+					body.setUserData("platform1");
+					
+					physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
+									
+					registerUpdateHandler(new TimerHandler(10, true, new ITimerCallback() 
+					{
+		                @Override
+		                public void onTimePassed(final TimerHandler pTimerHandler) 
+		                {
+		                	if(player.collidesWith(levelObject))
+		                	{
+		                		if(player.footContacts > 0)
+		                			player.footContacts = 0;
+		                	}
+		                	final PhysicsConnector physicsConnector =
+		                			physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(levelObject);
+		                        physicsWorld.unregisterPhysicsConnector(physicsConnector);
+		                        body.setActive(false);
+		                        physicsWorld.destroyBody(body);
+		                        detachChild(levelObject);
+			                	unregisterUpdateHandler(pTimerHandler);
+		                }
+		           }));
 				} 
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2))
 				{
-					levelObject = new SemiStaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform2_region);
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.platform2_region, vbom);
+					final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF);
+					body.setUserData("platform2");
+					physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
+					
+					registerUpdateHandler(new TimerHandler(10, true, new ITimerCallback() 
+					{
+		                @Override
+		                public void onTimePassed(final TimerHandler pTimerHandler) 
+		                {
+		                	if(player.collidesWith(levelObject))
+		                	{
+		                		if(player.footContacts > 0)
+		                			player.footContacts = 0;
+		                	}
+		                	final PhysicsConnector physicsConnector =
+		                			physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(levelObject);
+		                        physicsWorld.unregisterPhysicsConnector(physicsConnector);
+		                        body.setActive(false);
+		                        physicsWorld.destroyBody(body);
+		                        detachChild(levelObject);
+			                	unregisterUpdateHandler(pTimerHandler);
+		                }
+		           }));
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
 				{
-					levelObject = new FragilePlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform3_region);
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.platform3_region, vbom);
+					final Body body = PhysicsFactory.createBoxBody(physicsWorld, levelObject, BodyType.StaticBody, FIXTURE_DEF);
+					body.setUserData("platform3");
+					physicsWorld.registerPhysicsConnector(new PhysicsConnector(levelObject, body, true, false));
+					
+					registerUpdateHandler(new TimerHandler(10, true, new ITimerCallback() 
+					{
+		                @Override
+		                public void onTimePassed(final TimerHandler pTimerHandler) 
+		                {
+		                	if(player.collidesWith(levelObject))
+		                	{
+		                		if(player.footContacts > 0)
+		                			player.footContacts = 0;
+		                	}
+		                	final PhysicsConnector physicsConnector =
+		                			physicsWorld.getPhysicsConnectorManager().findPhysicsConnectorByShape(levelObject);
+		                        physicsWorld.unregisterPhysicsConnector(physicsConnector);
+		                        body.setActive(false);
+		                        physicsWorld.destroyBody(body);
+		                        detachChild(levelObject);
+			                	unregisterUpdateHandler(pTimerHandler);
+		                }
+		           }));
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM4))
 				{
-					levelObject = new MovingXPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform4_region);					
+					levelObject = new BluePlatform(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM5))
 				{
-					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
+					levelObject = new PurplePlatform(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN))
 				{
@@ -317,7 +385,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								if (!gameOverDisplayed)
 								{
 									displayGameOverText();
-									player.setVisible(false);
 									try { CheckBestStats(); } catch (NumberFormatException e) {} catch (IOException e) {}
 									try { UpdateGlobatStats();} catch (IOException e) {}
 									
@@ -341,11 +408,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								{
 									levelToLoad++;
 									numberScenesLoaded++;
-									/*if(levelToLoad > 4)
-										loadLevel(4);
+									if(levelToLoad > 2)
+										loadLevel(2);
 									else
-										loadLevel(levelToLoad);*/
-									loadLevel((levelToLoad % 3) + 2);
+										loadLevel(levelToLoad);
 								}
 							}						
 							
@@ -378,7 +444,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								}
 							}
 						};
-						initialPosition = x;
 						levelObject = player;
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1))
@@ -420,10 +485,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					Trap trap = new Trap(x + ((levelToLoad-1) *800), y, vbom, camera, physicsWorld);
 					trap.setUserData("bullet");
 					levelObject = trap;
-				}
-				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DESTRUCTIBLE_BLOC))
-				{
-					levelObject = new DestructibleBlock(x + ((levelToLoad-1) *800), y, 50, 50, vbom, camera, physicsWorld);
 				}
 				else
 				{
@@ -520,6 +581,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						{
 							unload = true;
 						}
+						
 					}
             	};
             	bullet.setUserData("bullet");
@@ -548,14 +610,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private void createBackground()
 	{
-		ParallaxBackground background = new ParallaxBackground(0, 0, 0);
-	    background.attachParallaxEntity(new ParallaxEntity(100, new Sprite(camera.getWidth() / 2, camera.getHeight() / 2, resourcesManager.backgroud, vbom)));
-	    setBackground(background);
+		setBackground(new Background(Color.BLUE));
 	}
 	
 	private void addToScore(int i)
 	{		
-		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10));
+		try 
+		{
+			score = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_JUMPS_KEY));
+		}
+		catch (NumberFormatException e) 
+		{
+
+		} catch (IOException e) 
+		{
+
+		}
 		scoreText.setText("Score: " + score);
 	}
 	
@@ -585,17 +655,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					if (x2.getBody().getUserData().equals("player") && ( x1.getBody().getUserData().equals("platform1")
 							|| x1.getBody().getUserData().equals("platform2") || x1.getBody().getUserData().equals("platform3") ||
 							x1.getBody().getUserData().equals("enemy1") || x1.getBody().getUserData().equals("trap") || 
-							x1.getBody().getUserData().equals("platform4") || x1.getBody().getUserData().equals("platform5") || 
-							x1.getBody().getUserData().equals("destructiblebloc") || x1.getBody().getUserData().equals("hit")))
+							x1.getBody().getUserData().equals("platform4") || x1.getBody().getUserData().equals("platform5")))
 					{
+						if(x2.getBody().getPosition().y >= x1.getBody().getPosition().y)
 							player.increaseFootContacts();
 					}
 					else if (x1.getBody().getUserData().equals("player") && ( x2.getBody().getUserData().equals("platform1")
 							|| x2.getBody().getUserData().equals("platform2") || x2.getBody().getUserData().equals("platform3") ||
 							x2.getBody().getUserData().equals("enemy1") || x2.getBody().getUserData().equals("trap") ||
-							x2.getBody().getUserData().equals("platform4") || x2.getBody().getUserData().equals("platform5")
-							|| x2.getBody().getUserData().equals("destructiblebloc") || x2.getBody().getUserData().equals("hit")))
+							x2.getBody().getUserData().equals("platform4") || x2.getBody().getUserData().equals("platform5")))
 					{
+						if(x1.getBody().getPosition().y >= x2.getBody().getPosition().y)
 							player.increaseFootContacts();
 					}
 					
@@ -672,16 +742,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 					{
 						x2.getBody().setType(BodyType.StaticBody);
 						x1.getBody().setType(BodyType.StaticBody);
-					}
-					if(x1.getBody().getUserData().equals("bullet") && x2.getBody().getUserData().equals("destructiblebloc"))
-					{
-						x1.getBody().setType(BodyType.StaticBody);
-						x2.getBody().setUserData("hit");
-					}
-					else if(x2.getBody().getUserData().equals("bullet") && x1.getBody().getUserData().equals("destructiblebloc"))
-					{
-						x1.getBody().setUserData("hit");
-						x2.getBody().setType(BodyType.StaticBody);
 					} 
 					
 					//---------------------------------
@@ -782,7 +842,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		numberCoinsCollected = 0;
 		numberEnemiesDestroyed = 0;
 		numberJumps = 0;
-		numberMeters = 0;
+		numberKilometers = 0;
 		numberScenesLoaded = 1;
 		numberTrapsDestroyed = 0;
 		score = 0;
@@ -946,9 +1006,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			resourcesManager.write(BEST_NUMBER_JUMPS_KEY, Integer.toString(numberJumps));
 		}
 		//Number Kilometers
-		if(numberMeters > Float.parseFloat(resourcesManager.read(BEST_NUMBER_KILOMETERS_KEY)))
+		if(numberKilometers > Integer.parseInt(resourcesManager.read(BEST_NUMBER_KILOMETERS_KEY)))
 		{
-			resourcesManager.write(BEST_NUMBER_KILOMETERS_KEY, Float.toString(numberMeters));
+			resourcesManager.write(BEST_NUMBER_KILOMETERS_KEY, Integer.toString(numberKilometers));
 		}
 		//Scenes Loaded
 		if(numberScenesLoaded > Integer.parseInt(resourcesManager.read(BEST_NUMBER_SCENES_LOADED_KEY)))
@@ -981,8 +1041,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		final int getJumps = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_JUMPS_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_JUMPS_KEY, Integer.toString(getJumps + numberJumps));
 		//KILOMETERS
-		final float getMeters = Float.parseFloat(resourcesManager.read(GLOBAL_NUMBER_KILOMETERS_KEY));
-		resourcesManager.write(GLOBAL_NUMBER_KILOMETERS_KEY, Float.toString(getMeters + numberMeters));
+		final int getKilometers = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_KILOMETERS_KEY));
+		resourcesManager.write(GLOBAL_NUMBER_KILOMETERS_KEY, Integer.toString(getKilometers + numberKilometers));
 		//SCENES
 		final int getScenesLoaded = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_SCENES_LOADED_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_SCENES_LOADED_KEY, Integer.toString(getScenesLoaded + numberScenesLoaded));

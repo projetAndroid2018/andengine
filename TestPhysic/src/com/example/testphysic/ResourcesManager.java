@@ -6,6 +6,8 @@ import android.graphics.Color;
 
 
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.Engine;
 
 import org.andengine.engine.camera.BoundCamera;
@@ -38,6 +40,7 @@ public class ResourcesManager
 	public VertexBufferObjectManager vbom;
 	
 	public Font font;
+	public Font font2;
 	
 	//---------------------------------------------
 	// TEXTURES & TEXTURE REGIONS
@@ -47,10 +50,11 @@ public class ResourcesManager
 	public ITextureRegion menu_background_region;
 	public ITextureRegion play_region;
 	public ITextureRegion options_region;
+	public ITextureRegion stat_region;
+	
 	
 	// Game Texture
 	public BuildableBitmapTextureAtlas gameTextureAtlas;
-	public BuildableBitmapTextureAtlas backgroundTextureAtlas;
 	
 	// Game Texture Regions
 	public ITextureRegion platform1_region;
@@ -62,8 +66,6 @@ public class ResourcesManager
 	public ITiledTextureRegion player_region;
 	public ITextureRegion bullet;
 	public ITextureRegion trapRegion;
-	public ITextureRegion backgroud;
-	public ITiledTextureRegion destructible_bloc;
 	
 	//ENNEMIS TEXTURE
 	public BuildableBitmapTextureAtlas ennemiTextureAtlas;
@@ -82,9 +84,18 @@ public class ResourcesManager
 	public ITextureRegion complete_window_region;
 	public ITiledTextureRegion complete_stars_region;
 	
+	//option
+	private BuildableBitmapTextureAtlas optionTextureAtlas;
+	public ITextureRegion retour_region;
+	public ITiledTextureRegion son_region;
+		
+	//stats
+	private BuildableBitmapTextureAtlas statTextureAtlas;
+	public ITextureRegion retour_region_stat;
 	
-	
-	
+	//SOUND
+	public Music music_menu;
+	public Music music_game;
 	
 	
 	
@@ -94,6 +105,74 @@ public class ResourcesManager
 	// CLASS LOGIC
 	//---------------------------------------------
 
+	public void loadMenuSoundResources()
+	{
+		try
+		{
+			music_menu = MusicFactory.createMusicFromAsset(engine.getMusicManager(), activity,"music/music.ogg");
+			music_game = MusicFactory.createMusicFromAsset(engine.getMusicManager(), activity,"music/epic_game.ogg");
+		}
+		catch (IOException e)
+		{
+		    e.printStackTrace();
+		}
+	}
+	public void loadStatResources()
+	{
+		loadStatGraphics();
+		loadStatFonts();
+	}
+	private void loadStatFonts()
+	{
+		FontFactory.setAssetBasePath("font/");
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
+		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "BKANT.TTF", 50, true, Color.BLACK, 2, Color.BLACK);
+		font.load();
+		font2.load();
+	}
+	private void loadStatGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		statTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+        retour_region_stat = BitmapTextureAtlasTextureRegionFactory.createFromAsset(statTextureAtlas, activity, "retour.png");
+        
+        try 
+    	{
+			this.statTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.statTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	
+	public void loadOptionResources()
+	{
+		loadOptionGraphics();
+	}
+	
+	private void loadOptionGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+        optionTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+        retour_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(optionTextureAtlas, activity, "retour.png");
+        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("music/");
+        son_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(optionTextureAtlas, activity, "son.png", 2, 1);
+        
+        try 
+    	{
+			this.optionTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.optionTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	
 	public void loadMenuResources()
 	{
 		loadMenuGraphics();
@@ -115,6 +194,7 @@ public class ResourcesManager
         menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_screen.png");
         play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
         options_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "options.png");
+        stat_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "stats.png");
        
     	try 
     	{
@@ -156,25 +236,18 @@ public class ResourcesManager
         player_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "player.png", 3, 1);
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         trapRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "piege1.png");
-        destructible_bloc = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "destructibleBlock.png", 1, 2);
+        
         
         complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "end_level.png");
         complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "stars.png", 2, 1);
-        
-        backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
-        backgroud = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "background.jpg");
-        
-        
-        
+
         loadEnnemiGraphics();
         
     	try 
     	{
 			this.gameTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.gameTextureAtlas.load();
-			this.backgroundTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
-			this.backgroundTextureAtlas.load();
-    	} 
+		} 
     	catch (final TextureAtlasBuilderException e)
     	{
 			Debug.e(e);
@@ -249,6 +322,16 @@ public class ResourcesManager
 	{
 		splashTextureAtlas.unload();
 		splash_region = null;
+	}
+	public void unloadStatScreen()
+	{
+		statTextureAtlas.unload();
+	}
+	public void unloadOptionScreen()
+	{
+		optionTextureAtlas.unload();
+		son_region = null;
+		retour_region = null;
 	}
 	
 	public void unloadMenuTextures()
