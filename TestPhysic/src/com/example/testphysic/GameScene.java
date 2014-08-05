@@ -203,7 +203,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void onBackKeyPressed()
 	{
-		SceneManager.getInstance().loadMenuScene(engine);
+		disposeScene();
+		SceneManager.getInstance().createStatScene();
 	}
 	@Override
 	public SceneType getSceneType()
@@ -330,7 +331,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						                }
 						           }));
 									
-								}	
+								}
+								
 							}
 
 							@Override

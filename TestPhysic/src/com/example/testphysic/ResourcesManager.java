@@ -6,6 +6,8 @@ import android.graphics.Color;
 
 
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.Engine;
 
 import org.andengine.engine.camera.BoundCamera;
@@ -21,6 +23,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtla
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.debug.Debug;
 
@@ -82,6 +85,21 @@ public class ResourcesManager
 	public ITextureRegion complete_window_region;
 	public ITiledTextureRegion complete_stars_region;
 	
+	//option
+	private BuildableBitmapTextureAtlas optionTextureAtlas;
+	public ITextureRegion retour_region;
+	public ITiledTextureRegion son_region;
+			
+	//stats
+	private BuildableBitmapTextureAtlas statTextureAtlas;
+	public ITextureRegion retour_region_stat;
+	private TextureRegion background_stat;
+		
+	//SOUND
+	public Music music_menu;
+	public Music music_game;
+
+	
 	
 	
 	
@@ -93,7 +111,74 @@ public class ResourcesManager
 	//---------------------------------------------
 	// CLASS LOGIC
 	//---------------------------------------------
+	public void loadMenuSoundResources()
+	{
+		try
+		{
+			music_menu = MusicFactory.createMusicFromAsset(engine.getMusicManager(), activity,"music/music.ogg");
+			music_game = MusicFactory.createMusicFromAsset(engine.getMusicManager(), activity,"music/epic_game.ogg");
+		}
+		catch (IOException e)
+		{
+		    e.printStackTrace();
+		}
+	}
+	public void loadStatResources()
+	{
+		loadStatGraphics();
+		loadStatFonts();
+	}
+	private void loadStatFonts()
+	{
+		FontFactory.setAssetBasePath("font/");
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 50, true, Color.WHITE, 2, Color.BLACK);
+		font.load();
+
+	}
+	private void loadStatGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		statTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+        retour_region_stat = BitmapTextureAtlasTextureRegionFactory.createFromAsset(statTextureAtlas, activity, "retour.png");
+        background_stat = BitmapTextureAtlasTextureRegionFactory.createFromAsset(statTextureAtlas, activity, "background_stat.png");
+        
+        try 
+    	{
+			this.statTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.statTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	
+	public void loadOptionResources()
+	{
+		loadOptionGraphics();
+	}
+	
+	private void loadOptionGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+        optionTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+        retour_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(optionTextureAtlas, activity, "retour.png");
+        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("music/");
+        son_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(optionTextureAtlas, activity, "son.png", 2, 1);
+        
+        try 
+    	{
+			this.optionTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.optionTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	
 	public void loadMenuResources()
 	{
 		loadMenuGraphics();
