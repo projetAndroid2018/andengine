@@ -111,7 +111,7 @@ public class SceneManager
 		pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
 	}
 	
-	private void disposeSplashScene()
+	public void disposeSplashScene()
 	{
 		ResourcesManager.getInstance().unloadSplashScreen();
 		splashScene.disposeScene();

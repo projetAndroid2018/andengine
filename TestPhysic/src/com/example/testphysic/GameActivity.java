@@ -68,6 +68,7 @@ public class GameActivity extends BaseGameActivity
             {
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 SceneManager.getInstance().createMenuScene();
+                SceneManager.getInstance().disposeSplashScene();
             }
 		}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();

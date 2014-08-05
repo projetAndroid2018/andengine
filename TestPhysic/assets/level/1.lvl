@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <level width="140000" height="780">	
-	<entity x="100" y="100" type="platform1"/>
-	<entity x="250" y="100" type="platform1"/>
-	<entity x="400" y="100" type="platform1"/>
-	<entity x="400" y="140" type="destructibleBloc"/>
-	<entity x="550" y="100" type="platform1"/>
-	<entity x="700" y="100" type="platform1"/>
+	<entity x="75" y="100" type="stick"/>
+	<entity x="350" y="100" type="line"/>
+	<entity x="625" y="100" type="stick"/>
 	<entity x="100" y="170" type="player"/>
-	<entity x="100" y="140" type="coin"/>
-	<entity x="400" y="140" type="coin"/>
-	<entity x="700" y="140" type="coin"/>
-	<entity x="250" y="150" type="enemy1"/>
-	<entity x="400" y="140" type="trap"/>
-	<entity x="700" y="140" type="trap"/>
-	
 </level>

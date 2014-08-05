@@ -18,7 +18,7 @@ import com.example.testphysic.SceneManager;
 public class StaticPlatform extends Sprite
 {
 	
-	private Body body;
+	public Body body;
 
 	public StaticPlatform(float pX, float pY, float width, float height, VertexBufferObjectManager vbo, Camera camera,
 			PhysicsWorld physicsWorld, ITextureRegion texture)

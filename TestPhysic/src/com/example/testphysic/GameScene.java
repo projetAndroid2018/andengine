@@ -70,12 +70,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3 = "platform3";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM4 = "platform4";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM5 = "platform5";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LINE = "line";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_STICK = "stick";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_TRAP = "trap";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN = "coin";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLAYER = "player";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1 = "enemy1";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DESTRUCTIBLE_BLOC = "destructibleBloc";
+
 	
 	public static Player player;
 	
@@ -88,6 +91,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static long[] animateArea2 = {0 ,100};
 	private static long[] animate;
 	private Rectangle rectangle;
+	private Sprite balance;
+	private Sprite arrow;
+	private Sprite toLeftArrow;
+	private Sprite toRightArrow;
+	private Rectangle toRightArrowRectangle;
+	private Rectangle toLeftArrowRectangle;
 	
 	//GameOver Text
 	private Text gameOverText;
@@ -96,6 +105,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//In Game
 	private boolean firstTouch = false;
 	private int levelToLoad;
+	private float angle = 0;
+	private float shift;
+	private boolean updateBalance;
+	private boolean firstBalance = true;
 	
 	//-------------------------------------------
 	//STATS && SCORE
@@ -206,6 +219,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		disposeScene();
 		SceneManager.getInstance().createStatScene();
 	}
+	
 	@Override
 	public SceneType getSceneType()
 	{
@@ -288,6 +302,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
 				}
+				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LINE))
+				{
+					StaticPlatform line = new StaticPlatform(x + ((levelToLoad-1) *800), y, 550, 50, vbom, camera, physicsWorld, resourcesManager.lineRegion);
+					line.body.setUserData("line");
+					levelObject = line;
+				}
+				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_STICK))
+				{
+					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, 50, 50, vbom, camera, physicsWorld, resourcesManager.stickRegion);					
+				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN))
 				{
 					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.coin_region, vbom)
@@ -343,11 +367,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								{
 									levelToLoad++;
 									numberScenesLoaded++;
-									/*if(levelToLoad > 4)
-										loadLevel(4);
+									if(levelToLoad < 2)
+										loadLevel(levelToLoad);
 									else
-										loadLevel(levelToLoad);*/
-									loadLevel((levelToLoad % 3) + 2);
+										loadLevel(2);
 								}
 							}						
 							
@@ -484,6 +507,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		
 		resourcesManager.loadHUDGraphics();
 		
+		
 		rectangle = new Rectangle(500, 420, 300, 100,vbom)
 	{
 		@Override
@@ -537,7 +561,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
             return true;
         };
 	};
-		scoreText.setText("Score: 0");
+		
+	arrow = new Sprite (200 , 190, 50, 100, resourcesManager.arrowRegion, vbom);
+	balance = new Sprite(200, 200, resourcesManager.balanceRegion, vbom);
+	
+	toLeftArrow = new Sprite (500 , 100, 200, 81, resourcesManager.toLeftArrow, vbom);
+	toRightArrow = new Sprite (200 , 100, 200, 81, resourcesManager.toRightArrow, vbom);
+	
+	    scoreText.setText("Score: 0");
 		gameHUD.registerTouchArea(rectangle);
 		gameHUD.attachChild(scoreText);
 
@@ -548,6 +579,119 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		camera.setHUD(gameHUD);
 	}
 	
+	private void displayEquilibrium()
+	{
+		gameHUD.attachChild(arrow);
+		gameHUD.attachChild(balance);
+		
+		toLeftArrowRectangle = new Rectangle(500, 100, 200, 81, vbom)
+		{
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
+			{
+				if(pSceneTouchEvent.isActionDown())
+					if(levelToLoad <= 20)
+						angle += (levelToLoad / 4) * -4;	
+					else
+						angle += 5 * -4;	
+				return true;
+			};
+		};
+		
+		
+		toRightArrowRectangle = new Rectangle(200, 100, 200, 81, vbom)
+		{
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
+			{
+				if(pSceneTouchEvent.isActionDown())
+					if(levelToLoad <= 20)
+						angle += (levelToLoad / 4) * 4;			
+					else
+						angle += 5 * 4;	
+				return true;
+			};
+		};
+		
+		gameHUD.registerTouchArea(toLeftArrowRectangle);
+		gameHUD.registerTouchArea(toRightArrowRectangle);
+		
+		gameHUD.attachChild(toLeftArrow);
+		gameHUD.attachChild(toRightArrow);
+	    
+	    if(firstBalance)
+	    registerUpdateHandler(new TimerHandler(1f / 20.0f, true, new ITimerCallback() 
+	    {
+            @Override
+            public void onTimePassed(final TimerHandler pTimerHandler) 
+            {
+            	firstBalance = false;
+            	if(updateBalance)
+            	{
+            		if(angle < 0)
+            		{
+            			if(levelToLoad <= 20)
+            				shift = (levelToLoad / 4) * -.8f;
+            			else
+            				shift = 5 * -.8f;
+            			
+            		}
+            		else if (angle > 0)
+            		{
+            			if(levelToLoad <= 20)
+            				shift = (levelToLoad / 4)  * 0.8f;
+            			else
+            				shift = 5 * 0.8f;
+            		}
+            		else 
+            		{
+            			if((int) player.getX() % 2 == 0)
+            			{
+            				if(levelToLoad <= 20)
+            					shift = (levelToLoad / 4) * -.8f;
+            				else
+            					shift = 5 * -.8f;
+            			}
+            			else
+            			{
+            				if(levelToLoad <= 20)
+            					shift = (levelToLoad / 4)  * 0.8f;
+            				else
+            					shift = 5  * 0.8f;
+            			}
+            		}
+            		
+            		angle += shift;
+            		arrow.setRotation(angle);
+            		if(angle > 90 || angle < (-90))
+            		{
+            			unregisterUpdateHandler(pTimerHandler);
+            			player.onDie();
+            		}
+            	}
+            }
+	    }));
+	    
+	    
+	    
+	    
+	    
+	    
+	}
+	
+	private void removeEquilibrium()
+	{
+		arrow.detachSelf();
+		balance.detachSelf();
+		toLeftArrow.detachSelf();
+		toRightArrow.detachSelf();
+		angle = 0;
+		shift = 0;
+		gameHUD.unregisterTouchArea(toLeftArrowRectangle);
+		gameHUD.unregisterTouchArea(toRightArrowRectangle);
+		updateBalance = false;
+	}
+
 	private void createBackground()
 	{
 		ParallaxBackground background = new ParallaxBackground(0, 0, 0);
@@ -584,19 +728,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				//JUMP
 				if (x1.getBody().getUserData() != null && x2.getBody().getUserData() != null)
 				{
-					if (x2.getBody().getUserData().equals("player") && ( x1.getBody().getUserData().equals("platform1")
-							|| x1.getBody().getUserData().equals("platform2") || x1.getBody().getUserData().equals("platform3") ||
-							x1.getBody().getUserData().equals("enemy1") || x1.getBody().getUserData().equals("trap") || 
-							x1.getBody().getUserData().equals("platform4") || x1.getBody().getUserData().equals("platform5") || 
-							x1.getBody().getUserData().equals("destructiblebloc") || x1.getBody().getUserData().equals("hit")))
+					if (x2.getBody().getUserData().equals("player"))
 					{
 							player.increaseFootContacts();
 					}
-					else if (x1.getBody().getUserData().equals("player") && ( x2.getBody().getUserData().equals("platform1")
-							|| x2.getBody().getUserData().equals("platform2") || x2.getBody().getUserData().equals("platform3") ||
-							x2.getBody().getUserData().equals("enemy1") || x2.getBody().getUserData().equals("trap") ||
-							x2.getBody().getUserData().equals("platform4") || x2.getBody().getUserData().equals("platform5")
-							|| x2.getBody().getUserData().equals("destructiblebloc") || x2.getBody().getUserData().equals("hit")))
+					else if (x1.getBody().getUserData().equals("player"))
 					{
 							player.increaseFootContacts();
 					}
@@ -731,6 +867,17 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 							x1.getBody().setLinearVelocity( new Vector2(0,0));
 						}
 					}
+					//BALANCE
+					if(x1.getBody().getUserData().equals("line") && x2.getBody().getUserData().equals("player"))
+					{
+						updateBalance = true;
+						displayEquilibrium();
+					}
+					else if(x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("line"))
+					{
+						updateBalance = true;
+						displayEquilibrium();
+					}
 				}
 			}
 
@@ -763,6 +910,20 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						player.canRun = true;
 						x1.getBody().setLinearVelocity( new Vector2(0,0));
 					}
+					
+					//EQUILIBIRUM
+					if(x1.getBody().getUserData().equals("line") && x2.getBody().getUserData().equals("player"))
+					{
+						removeEquilibrium();
+						updateBalance = false;
+					}
+					else if(x1.getBody().getUserData().equals("player") && x2.getBody().getUserData().equals("line"))
+					{
+						removeEquilibrium();
+						updateBalance = false;
+					}
+					
+					
 				}
 			}
 

@@ -67,6 +67,8 @@ public class ResourcesManager
 	public ITextureRegion trapRegion;
 	public ITextureRegion backgroud;
 	public ITiledTextureRegion destructible_bloc;
+	public ITextureRegion lineRegion;
+	public ITextureRegion stickRegion;
 	
 	//ENNEMIS TEXTURE
 	public BuildableBitmapTextureAtlas ennemiTextureAtlas;
@@ -76,6 +78,11 @@ public class ResourcesManager
 	public BuildableBitmapTextureAtlas HUDTextureAtlas;
 	public ITiledTextureRegion area;
 	public ITiledTextureRegion heartsRegion;
+	public ITextureRegion arrowRegion;
+	public ITextureRegion balanceRegion;
+	public BuildableBitmapTextureAtlas arrowTextureAtlas;
+	public ITextureRegion toLeftArrow;
+	public ITextureRegion toRightArrow;
 	
 	//SPLASH
 	private BitmapTextureAtlas splashTextureAtlas;
@@ -93,7 +100,7 @@ public class ResourcesManager
 	//stats
 	private BuildableBitmapTextureAtlas statTextureAtlas;
 	public ITextureRegion retour_region_stat;
-	private TextureRegion background_stat;
+	public TextureRegion background_stat;
 		
 	//SOUND
 	public Music music_menu;
@@ -140,7 +147,7 @@ public class ResourcesManager
 	private void loadStatGraphics()
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-		statTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+		statTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 512, TextureOptions.BILINEAR);
         retour_region_stat = BitmapTextureAtlasTextureRegionFactory.createFromAsset(statTextureAtlas, activity, "retour.png");
         background_stat = BitmapTextureAtlasTextureRegionFactory.createFromAsset(statTextureAtlas, activity, "background_stat.png");
         
@@ -242,6 +249,8 @@ public class ResourcesManager
         bullet = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bullet.png");
         trapRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "piege1.png");
         destructible_bloc = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "destructibleBlock.png", 1, 2);
+        lineRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "ligne.png");
+        stickRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "bordure.png");      
         
         complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "end_level.png");
         complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "stars.png", 2, 1);
@@ -289,11 +298,19 @@ public class ResourcesManager
 		HUDTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 2048, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		area = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(HUDTextureAtlas, activity, "fires.png", 2, 1);
 		heartsRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(HUDTextureAtlas, activity, "coeurs.png", 2, 1);
+		arrowRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDTextureAtlas, activity, "fleche.png");
+		balanceRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDTextureAtlas, activity, "balance.png");
 		
+		arrowTextureAtlas =  new BuildableBitmapTextureAtlas(activity.getTextureManager(), 512, 126, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		toLeftArrow = BitmapTextureAtlasTextureRegionFactory.createFromAsset(arrowTextureAtlas, activity, "ToLeft.png");
+		toRightArrow = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDTextureAtlas, activity, "toRight.png");
+	
 		try
 		{
 			HUDTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			HUDTextureAtlas.load();
+			arrowTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			arrowTextureAtlas.load();
 		}
 		catch(final TextureAtlasBuilderException e)
 		{
