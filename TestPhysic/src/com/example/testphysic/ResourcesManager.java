@@ -69,6 +69,21 @@ public class ResourcesManager
 	public ITiledTextureRegion destructible_bloc;
 	public ITextureRegion lineRegion;
 	public ITextureRegion stickRegion;
+		//perturbations
+	public BuildableBitmapTextureAtlas perturbationsAtlas;
+	public ITextureRegion verticalRegion;
+	public ITextureRegion horizontalRegion;
+	public ITextureRegion diagonalRegion;
+	
+	//BONUS
+	public BuildableBitmapTextureAtlas bonusAtlas;
+	public ITextureRegion redBallRegion;
+	public ITextureRegion blueBallRegion;
+	public ITextureRegion mysteryBallRegion;
+	public ITextureRegion orangeBallRegion;
+	public ITextureRegion blackBallRegion;
+	
+	
 	
 	//ENNEMIS TEXTURE
 	public BuildableBitmapTextureAtlas ennemiTextureAtlas;
@@ -200,6 +215,47 @@ public class ResourcesManager
 		loadGameAudio();
 	}
 	
+	private void loadPerturbations()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+        perturbationsAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 512, TextureOptions.BILINEAR);
+        verticalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations2.png");
+        horizontalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations1.png");
+        diagonalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations3.png");
+	
+    	try 
+    	{
+			perturbationsAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			perturbationsAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			
+		}
+        
+	}
+	
+	private void loadBonus()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+        bonusAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 256, 32, TextureOptions.BILINEAR);
+        redBallRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(bonusAtlas, activity, "redBall.png");
+       	blueBallRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(bonusAtlas, activity, "blueBall.png");
+        orangeBallRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(bonusAtlas, activity, "orangeBall.png");
+        blackBallRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(bonusAtlas, activity, "blackBall.png");
+        mysteryBallRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(bonusAtlas, activity, "mysteryBall.png");
+    	
+        try 
+    	{
+			bonusAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			bonusAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			
+		}
+	}
+	
 	private void loadMenuGraphics()
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
@@ -260,7 +316,7 @@ public class ResourcesManager
         
         
         
-        loadEnnemiGraphics();
+
         
     	try 
     	{
@@ -273,6 +329,11 @@ public class ResourcesManager
     	{
 			Debug.e(e);
 		}
+    	
+    	
+        loadEnnemiGraphics();
+        loadPerturbations();
+        loadBonus();
 	}
 	
 	private void loadEnnemiGraphics() 
@@ -332,6 +393,8 @@ public class ResourcesManager
 	{
 		gameTextureAtlas.unload();
 		ennemiTextureAtlas.unload();
+		unloadBonus();
+		unloadPerturbations();
 	}
 	
 	public void unloadHUDGraphics()
@@ -363,6 +426,16 @@ public class ResourcesManager
 		menuTextureAtlas.load();
 	}
 
+	private void unloadBonus()
+	{
+		bonusAtlas.unload();
+	}
+	
+	private void unloadPerturbations()
+	{
+		perturbationsAtlas.unload();
+	}
+	
 	public static void prepareManager(Engine engine, GameActivity activity, BoundCamera camera, VertexBufferObjectManager vbom)
 	{
 		getInstance().engine = engine;

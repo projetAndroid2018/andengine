@@ -1,8 +1,6 @@
 package com.example.testphysic;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.timer.ITimerCallback;
-import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -31,6 +29,8 @@ public abstract class Player extends AnimatedSprite
 	public int life;
 	
 	public boolean collides;
+	
+	public float speedX;
 
 	// ---------------------------------------------
 	// CONSTRUCTOR
@@ -43,6 +43,7 @@ public abstract class Player extends AnimatedSprite
 		camera.setChaseEntity(this);
 		life = 10;
 		collides = false;
+		speedX = 6;
 	}
 	
 	// ---------------------------------------------
@@ -70,7 +71,7 @@ public abstract class Player extends AnimatedSprite
 					onDie();
 				
 				if (canRun)
-					body.setLinearVelocity(new Vector2(10, body.getLinearVelocity().y)); 
+					body.setLinearVelocity(new Vector2(speedX, body.getLinearVelocity().y)); 
 				else
 					body.setLinearVelocity(new Vector2(0, body.getLinearVelocity().y));
 				
@@ -96,19 +97,7 @@ public abstract class Player extends AnimatedSprite
 			return; 
 		}
 		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
-		
-		
-		SceneManager.getInstance().getCurrentScene().registerUpdateHandler(new 
-				TimerHandler(0.3f, true, new ITimerCallback() 
-				{
-					@Override
-					public void onTimePassed(final TimerHandler pTimerHandler) 
-					{
-						if(footContacts > 1)
-							footContacts--;
-					}
 
-				}));
 		GameScene.numberJumps++;
 	}
 	

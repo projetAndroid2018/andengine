@@ -78,7 +78,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LEVEL_COMPLETE = "levelComplete";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1 = "enemy1";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DESTRUCTIBLE_BLOC = "destructibleBloc";
+	
+	//BONUS--MALUS
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SCORE_INCREASER = "scoreplus";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SCORE_REDUCER = "scoreminus";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_RAISER = "speedplus";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_REDUCER = "speedminus";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_MYSTERY_BONUS = "mystery";
 
+	
 	
 	public static Player player;
 	
@@ -109,6 +117,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private float shift;
 	private boolean updateBalance;
 	private boolean firstBalance = true;
+	private static int scorePlus = 0;
+	private static int scoreMoins = 0;
 	
 	//-------------------------------------------
 	//STATS && SCORE
@@ -450,6 +460,94 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				{
 					levelObject = new DestructibleBlock(x + ((levelToLoad-1) *800), y, 50, 50, vbom, camera, physicsWorld);
 				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_REDUCER))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.blueBallRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								player.speedX += -2;
+							}
+						};
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_RAISER))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.redBallRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								player.speedX += 2;
+							}
+						};
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SCORE_REDUCER))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.orangeBallRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								scoreMoins++;
+							}
+						};
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SCORE_INCREASER))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.blackBallRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								scorePlus++; 
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+							}
+						};
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_MYSTERY_BONUS))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.mysteryBallRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								if( (int) player.getX() % 2 == 0)
+									score += 200;
+								else
+									score += -100;
+							}
+						};
+					};
+				}
 				else
 				{
 					throw new IllegalArgumentException();
@@ -701,7 +799,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	
 	private void addToScore(int i)
 	{		
-		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10));
+		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10) + (scorePlus * 50) + (scoreMoins * (-25) ));
 		scoreText.setText("Score: " + score);
 	}
 	
