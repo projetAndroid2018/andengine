@@ -85,6 +85,12 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_RAISER = "speedplus";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_REDUCER = "speedminus";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_MYSTERY_BONUS = "mystery";
+	
+	//PERTURBATIONS
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_VERTICAL_PERTURBATIONS = "verticalper";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HORIZONTAL_PERTURBATIONS = "horizontalper";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DIAGONAL_PERTURBATIONS = "diagonalper";
+
 
 	
 	
@@ -119,6 +125,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private boolean firstBalance = true;
 	private static int scorePlus = 0;
 	private static int scoreMoins = 0;
+	private int perturbationsVerticalTime = 300;
+	private int perturbationsHorizontalTime = 300;
+	private int perturbationsDiagonaTime = 300;
 	
 	//-------------------------------------------
 	//STATS && SCORE
@@ -526,6 +535,105 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								this.setIgnoreUpdate(true);
 							}
 						};
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_VERTICAL_PERTURBATIONS))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.verticalRegionRectangle, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								final Sprite perturbations = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.verticalRegion, vbom)
+								{
+									@Override
+									protected void onManagedUpdate(float pSecondsElapsed)
+									{
+										super.onManagedUpdate(pSecondsElapsed);
+										setPosition(camera.getCenterX(), camera.getCenterY());
+										perturbationsVerticalTime--;
+										if(perturbationsVerticalTime <= 0)
+										{
+											this.setVisible(false);
+											this.setIgnoreUpdate(true);
+											perturbationsVerticalTime = 300;
+										}	
+									};
+								};
+								SceneManager.getInstance().getCurrentScene().attachChild(perturbations);
+							}
+						};						
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HORIZONTAL_PERTURBATIONS))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.horizontalRegionRectangle, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								final Sprite perturbations = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.horizontalRegion, vbom)
+								{
+									@Override
+									protected void onManagedUpdate(float pSecondsElapsed)
+									{
+										super.onManagedUpdate(pSecondsElapsed);
+										setPosition(camera.getCenterX(), camera.getCenterY());
+										perturbationsHorizontalTime--;
+										if(perturbationsHorizontalTime <= 0)
+										{
+											this.setVisible(false);
+											this.setIgnoreUpdate(true);
+											perturbationsHorizontalTime = 300;
+										}	
+									};
+								};
+								SceneManager.getInstance().getCurrentScene().attachChild(perturbations);
+							}
+						};						
+					};
+				}
+				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_DIAGONAL_PERTURBATIONS))
+				{
+					levelObject = new Sprite(x + ((levelToLoad-1) *800), y, resourcesManager.diagonalRegionRectangle, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							super.onManagedUpdate(pSecondsElapsed);
+							if (player.collidesWith(this))
+							{
+								this.setVisible(false);
+								this.setIgnoreUpdate(true);
+								final Sprite perturbations = new Sprite(camera.getCenterX(), camera.getCenterY(), resourcesManager.diagonalRegion, vbom)
+								{
+									@Override
+									protected void onManagedUpdate(float pSecondsElapsed)
+									{
+										super.onManagedUpdate(pSecondsElapsed);
+										setPosition(camera.getCenterX(), camera.getCenterY());
+										perturbationsDiagonaTime--;
+										if(perturbationsDiagonaTime<= 0)
+										{
+											this.setVisible(false);
+											this.setIgnoreUpdate(true);
+											perturbationsDiagonaTime = 300;
+										}	
+									};
+								};
+								SceneManager.getInstance().getCurrentScene().attachChild(perturbations);
+							}
+						};						
 					};
 				}
 				else if(type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_MYSTERY_BONUS))

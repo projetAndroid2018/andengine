@@ -76,6 +76,10 @@ public class ResourcesManager
 	public ITextureRegion verticalRegion;
 	public ITextureRegion horizontalRegion;
 	public ITextureRegion diagonalRegion;
+	public ITextureRegion verticalRegionRectangle;
+	public ITextureRegion horizontalRegionRectangle;
+	public ITextureRegion diagonalRegionRectangle;
+	
 	
 	//BONUS
 	public BuildableBitmapTextureAtlas bonusAtlas;
@@ -299,8 +303,11 @@ public class ResourcesManager
         verticalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations2.png");
         horizontalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations1.png");
         diagonalRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations3.png");
-	
-    	try 
+        verticalRegionRectangle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations11.png");
+        horizontalRegionRectangle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations22.png");
+        diagonalRegionRectangle = BitmapTextureAtlasTextureRegionFactory.createFromAsset(perturbationsAtlas, activity, "perturbations33.png");
+        
+        try 
     	{
 			perturbationsAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			perturbationsAtlas.load();

@@ -3,8 +3,8 @@
 	<entity x="75" y="100" type="stick"/>
 	<entity x="350" y="100" type="line"/>
 	<entity x="625" y="100" type="stick"/>
-	<entity x="400" y="140" type="scoreplus"/>
-	<entity x="440" y="140" type="scoreminus"/>
-	<entity x="480" y="140" type="speedplus"/>
+	<entity x="400" y="140" type="horizontalper"/>
+	<entity x="440" y="140" type="verticalper"/>
+	<entity x="480" y="140" type="diagonalper"/>
 	
 </level>
