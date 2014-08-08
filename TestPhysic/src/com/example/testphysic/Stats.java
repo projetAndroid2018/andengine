@@ -17,7 +17,6 @@ import com.example.testphysic.SceneManager.SceneType;
 
 public class Stats extends BaseScene implements IOnMenuItemClickListener
 {
-
 	private final int MENU_RETOUR = 0;
 	private MenuScene menuChildScene;
 	
@@ -57,7 +56,7 @@ public class Stats extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public void createScene() 
 	{
-		ResourcesManager.getInstance().unloadGameTextures();
+		//ResourcesManager.getInstance().unloadGameTextures();
 		camera.setChaseEntity(null);
 		createBackground();
 		createMenuChildScene();

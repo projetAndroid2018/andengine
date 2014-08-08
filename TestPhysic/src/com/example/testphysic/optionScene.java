@@ -15,18 +15,17 @@ import com.example.testphysic.SceneManager.SceneType;
 
 public class optionScene extends BaseScene implements IOnMenuItemClickListener
 {
-	private boolean Sound_on;
 	
 	private MenuScene menuChildScene;
 	private final int MENU_RETOUR = 0;
 	private final int MENU_SON = 1;
+	private final int MENU_BOUTIQUE = 2;
 	
 	public AnimatedSpriteMenuItem SOUND_MenuItem;
 	
 	@Override
 	public void createScene() 
 	{
-		// TODO Auto-generated method stub
 		createBackground();
 		createMenuChildScene();
 	}
@@ -38,13 +37,27 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 		menuChildScene = new MenuScene(camera);
 		menuChildScene.setPosition(0, 0);
 		
-		
-		
 		final IMenuItem retourMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_RETOUR, resourcesManager.retour_region, vbom), 1.2f, 1);
-
+		final IMenuItem boutiqueMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_BOUTIQUE, resourcesManager.boutique_region, vbom), 1.2f, 1);
+		
 		SOUND_MenuItem = new AnimatedSpriteMenuItem(MENU_SON, resourcesManager.son_region, vbom);
 		
-		if (Sound_on)
+		menuChildScene.addMenuItem(retourMenuItem);
+		menuChildScene.addMenuItem(boutiqueMenuItem);
+		menuChildScene.addMenuItem(SOUND_MenuItem);
+		
+		menuChildScene.buildAnimations();
+		menuChildScene.setBackgroundEnabled(false);
+		
+		retourMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 200);
+		boutiqueMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY());
+		SOUND_MenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 100);
+		
+		
+		menuChildScene.setOnMenuItemClickListener(this);
+		
+		setChildScene(menuChildScene);
+		if (SceneManager.getInstance().Sound_on)
 		{
 			SOUND_MenuItem.setCurrentTileIndex(0);
 		}
@@ -52,21 +65,6 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 		{
 			SOUND_MenuItem.setCurrentTileIndex(1);
 		}
-		
-		
-		menuChildScene.addMenuItem(retourMenuItem);
-		menuChildScene.addMenuItem(SOUND_MenuItem);
-		
-		menuChildScene.buildAnimations();
-		menuChildScene.setBackgroundEnabled(false);
-		
-		retourMenuItem.setPosition(729/2, 214);
-		SOUND_MenuItem.setPosition(729/2, 100);
-		
-		
-		menuChildScene.setOnMenuItemClickListener(this);
-		
-		setChildScene(menuChildScene);
 	}
 	
 	private void createBackground()
@@ -93,7 +91,6 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public SceneType getSceneType() 
 	{
-		// TODO Auto-generated method stub
 		return SceneType.SCENE_OPTION;
 	}
 
@@ -113,18 +110,21 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				SceneManager.getInstance().createMenuScene();
 				return true;
 			case MENU_SON:
-				if (Sound_on)
+				if (SceneManager.getInstance().Sound_on)
 				{
-					Sound_on = false;
+					SceneManager.getInstance().Sound_on = false;
 					SOUND_MenuItem.setCurrentTileIndex(1);
 					resourcesManager.music_menu.resume();	
 				}
 				else
 				{
-					Sound_on = true;
+					SceneManager.getInstance().Sound_on = true;
 					SOUND_MenuItem.setCurrentTileIndex(0);
 					resourcesManager.music_menu.pause();
 				}
+				return true;
+			case MENU_BOUTIQUE:
+				SceneManager.getInstance().createBoutiqueScene();
 				return true;
 			default:
 				return false;

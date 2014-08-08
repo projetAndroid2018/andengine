@@ -11,6 +11,7 @@ public class SceneManager
 	//---------------------------------------------
 	// SCENES
 	//---------------------------------------------
+	public boolean Sound_on;
 	
 	private BaseScene splashScene;
 	private BaseScene menuScene;
@@ -18,6 +19,9 @@ public class SceneManager
 	private BaseScene loadingScene;
 	private BaseScene optionScene;
 	private BaseScene statScene;
+	private BaseScene highscoreScene;
+	private BaseScene boutiqueScene;
+	
 	
 	//---------------------------------------------
 	// VARIABLES
@@ -39,6 +43,8 @@ public class SceneManager
 		SCENE_LOADING,
 		SCENE_OPTION,
 		SCENE_STAT,
+		SCENE_HIGHSCORE,
+		SCENE_BOUTIQUE,
 	}
 	
 	//---------------------------------------------
@@ -74,9 +80,27 @@ public class SceneManager
 			case SCENE_STAT:
 				setScene(statScene);
 				break;
+			case SCENE_HIGHSCORE:
+				setScene(highscoreScene);
+				break;
+			case SCENE_BOUTIQUE:
+				setScene(boutiqueScene);
+				break;
 			default:
 				break;
 		}
+	}
+	public void createBoutiqueScene()
+	{
+		ResourcesManager.getInstance().loadBoutiqueResources();
+		boutiqueScene = new Boutique();
+        SceneManager.getInstance().setScene(boutiqueScene);
+	}
+	public void createHighscoreScene()
+	{
+		ResourcesManager.getInstance().loadHightResources();
+		highscoreScene = new Highscore();
+        SceneManager.getInstance().setScene(highscoreScene);
 	}
 	
 	public void createStatScene()
