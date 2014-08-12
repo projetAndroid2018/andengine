@@ -135,8 +135,8 @@ public class ResourcesManager
 	public TextureRegion background_hight;
 		
 	//SOUND
-	public Music music_menu;
-	public Music music_game;
+	public static Music music_menu;
+	public static Music music_game;
 
 	
 	
@@ -347,7 +347,7 @@ public class ResourcesManager
         menu_background_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "menu_screen.png");
         play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
         options_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "options.png");
-       stats_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity,"stats.png");
+        stats_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity,"stats.png");
         
     	try 
     	{
@@ -539,6 +539,15 @@ public class ResourcesManager
 		return activity.readStats(key);
 	}
 	
+	public void displayAd()
+	{
+		activity.setAdMobVisibile();
+	}
+	
+	public void hideAd()
+	{
+		activity.setAdMobInVisibile();
+	}
 	//---------------------------------------------
 	// GETTERS AND SETTERS
 	//---------------------------------------------

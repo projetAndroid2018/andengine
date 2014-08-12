@@ -11,6 +11,7 @@ public class SceneManager
 	//---------------------------------------------
 	// SCENES
 	//---------------------------------------------
+	
 	public boolean Sound_on;
 	
 	private BaseScene splashScene;
@@ -131,7 +132,7 @@ public class SceneManager
 		splashScene = new SplashScene();
 		currentScene = splashScene;
 		ResourcesManager.getInstance().loadMenuSoundResources();
-		ResourcesManager.getInstance().music_menu.play();
+		ResourcesManager.music_menu.play();
 		pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
 	}
 	
@@ -153,9 +154,9 @@ public class SceneManager
             	mEngine.unregisterUpdateHandler(pTimerHandler);
             	ResourcesManager.getInstance().loadGameResources();
             	
-            	if (ResourcesManager.getInstance().music_menu.isPlaying())
-            	{ResourcesManager.getInstance().music_menu.pause();}
-            	ResourcesManager.getInstance().music_game.play();
+            	if (ResourcesManager.music_menu.isPlaying())
+            	{ResourcesManager.music_menu.pause();}
+            	ResourcesManager.music_game.play();
             	
         		gameScene = new GameScene();
         		setScene(gameScene);

@@ -114,13 +114,13 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				{
 					SceneManager.getInstance().Sound_on = false;
 					SOUND_MenuItem.setCurrentTileIndex(1);
-					resourcesManager.music_menu.resume();	
+					ResourcesManager.music_menu.resume();	
 				}
 				else
 				{
 					SceneManager.getInstance().Sound_on = true;
 					SOUND_MenuItem.setCurrentTileIndex(0);
-					resourcesManager.music_menu.pause();
+					ResourcesManager.music_menu.pause();
 				}
 				return true;
 			case MENU_BOUTIQUE:
