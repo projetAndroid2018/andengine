@@ -81,7 +81,7 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 	private void createBackground()
 	{
 		attachChild(new Sprite(400, 240, engine.getCamera().getWidth(), engine.getCamera().getHeight(), 
-				resourcesManager.background_stat, vbom)
+				resourcesManager.background_hight, vbom)
 		{
     		@Override
             protected void preDraw(GLState pGLState, Camera pCamera) 

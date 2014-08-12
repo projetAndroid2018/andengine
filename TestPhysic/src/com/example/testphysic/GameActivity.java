@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.google.android.gms.ads.*;
+
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
 import org.andengine.engine.camera.BoundCamera;
@@ -27,10 +28,12 @@ public class GameActivity extends BaseGameActivity
 	private AdView adView;
 	//private AdView adView2;
 	private BoundCamera camera;
-	private static String MY_AD_UNIT_ID_BOTTOM = "ca-app-pub-1773597333087804/7248870773";
-	//private static String MY_AD_UNIT_ID_TOP_RIGHT = "ca-app-pub-1773597333087804/6337213977";
-	private static final String myHash= "893414CD738FC2D104BAFB5169F67803"; //TABLETTE
-	private static final String myHash2 = "361A4F228352D6761A32993A07F59A07"; //TELEPHONE
+	public InterstitialAd interstitial;
+	public static String MY_AD_UNIT_ID_BOTTOM = "ca-app-pub-1773597333087804/7248870773";
+	private static String MY_AD_UNIT_ID_INTERT = "ca-app-pub-1773597333087804/5087479977";
+	public static final String myHash= "893414CD738FC2D104BAFB5169F67803"; //TABLETTE
+	public static final String myHash2 = "361A4F228352D6761A32993A07F59A07"; //TELEPHONE
+	public static int timerAd = 3;
 
 	
 	
@@ -38,9 +41,29 @@ public class GameActivity extends BaseGameActivity
 	@Override 
 	protected void onSetContentView() 
 	{
+		
+        // Prepare the Interstitial Ad
+        interstitial = new InterstitialAd(this);
+        // Insert the Ad Unit ID
+        interstitial.setAdUnitId(MY_AD_UNIT_ID_INTERT);
+ 
+
+ 
+        // Request for Ads
+        AdRequest adRequest1 = new AdRequest.Builder()
+ 
+        // Add a test device to show Test Ads
+        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+	    .addTestDevice(myHash)
+	    .addTestDevice(myHash2)
+	    .build();
+
+        // Load ads into Interstitial Ads
+        interstitial.loadAd(adRequest1);
+		
 		//---------------------------------------------------------
 		// FIRST AD (BOTTOM)
-		//---------------------------------------------------------
+		//---------------------------------------------------------		
 		
         // CREATING the parent FrameLayout //
         final FrameLayout frameLayout = new FrameLayout(this);
@@ -60,7 +83,7 @@ public class GameActivity extends BaseGameActivity
         adView.setVisibility(AdView.INVISIBLE);
  
         // ADVIEW layout, show at the bottom of the screen //
-        final FrameLayout.LayoutParams adViewLayoutParams =
+        FrameLayout.LayoutParams adViewLayoutParams =
                 new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
                                              FrameLayout.LayoutParams.WRAP_CONTENT,
                                              Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM);
@@ -95,15 +118,31 @@ public class GameActivity extends BaseGameActivity
         adView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         this.setContentView(frameLayout, frameLayoutLayoutParams);
 
+
 	  }
 
-	
-	
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) 
 	{
 		return new LimitedFPSEngine(pEngineOptions, 60);
 	}
+   
+    public void displayInterstitial() 
+    {
+    	
+    	this.runOnUiThread(new Runnable() 
+        {
+                @Override
+                public void run() 
+                {
+                    // If Ads are loaded, show Interstitial else show nothing.
+                    if (interstitial.isLoaded()) 
+                    {
+                        interstitial.show();
+                    }
+                }
+        });
+    }
 	
 	public EngineOptions onCreateEngineOptions()
 	{
@@ -129,6 +168,7 @@ public class GameActivity extends BaseGameActivity
 	{
 		ResourcesManager.prepareManager(mEngine, this, camera, getVertexBufferObjectManager());
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
+		setAdMobVisibile();
 	}
 
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws IOException
@@ -145,7 +185,6 @@ public class GameActivity extends BaseGameActivity
                 mEngine.unregisterUpdateHandler(pTimerHandler);
                 SceneManager.getInstance().createMenuScene();
                 SceneManager.getInstance().disposeSplashScene();
-                
             }
 		}));
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
@@ -219,10 +258,10 @@ public class GameActivity extends BaseGameActivity
                 @Override
                 public void run() 
                 {
-                        adView.setVisibility(AdView.INVISIBLE);
+                	adView.setVisibility(AdView.INVISIBLE);
                 }
         });
-}
+    }
 
     public void setAdMobVisibile() 
     {
@@ -231,10 +270,11 @@ public class GameActivity extends BaseGameActivity
                 @Override
                 public void run() 
                 {
-                        adView.setVisibility(AdView.VISIBLE);
+                	adView.setVisibility(AdView.VISIBLE);
                 }
         });
-}
+    }
+
 
 
 }

@@ -4,6 +4,7 @@ package com.example.testphysic;
 import java.io.IOException;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
@@ -22,6 +23,7 @@ import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.view.RenderSurfaceView;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.level.EntityLoader;
@@ -38,6 +40,9 @@ import Platforms.MovingYPlatform;
 import Platforms.SemiStaticPlatform;
 import Platforms.StaticPlatform;
 
+import android.view.Gravity;
+import android.widget.FrameLayout;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -48,6 +53,9 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.example.testphysic.LevelCompleteWindow.StarsCount;
 import com.example.testphysic.SceneManager.SceneType;
 import com.example.testphysic.enemies.Enemy1;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
@@ -128,6 +136,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private int perturbationsVerticalTime = 300;
 	private int perturbationsHorizontalTime = 300;
 	private int perturbationsDiagonaTime = 300;
+	
 	
 	//-------------------------------------------
 	//STATS && SCORE
@@ -217,6 +226,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	@Override
 	public void createScene()
 	{
+		resourcesManager.hideAd();
 		InitializeGameStats();
 		InitializeBestStats();
 		InitializedGlobal();
@@ -237,6 +247,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		disposeScene();
 		SceneManager.getInstance().createStatScene();
+		resourcesManager.displayAd();
 	}
 	
 	@Override
@@ -361,6 +372,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								if (!gameOverDisplayed)
 								{
 									displayGameOverText();
+									resourcesManager.activity.setAdMobVisibile();
+									resourcesManager.activity.displayInterstitial();
+
 									player.setVisible(false);
 									try { CheckBestStats(); } catch (NumberFormatException e) {} catch (IOException e) {}
 									try { UpdateGlobatStats();} catch (IOException e) {}
@@ -1361,7 +1375,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		//SCORE
 		final int getScore = Integer.parseInt(resourcesManager.read(GLOBAL_SCORE_KEY));
 		resourcesManager.write(GLOBAL_SCORE_KEY, Integer.toString(getScore + score));
-		
 	}
 
+	
 }
