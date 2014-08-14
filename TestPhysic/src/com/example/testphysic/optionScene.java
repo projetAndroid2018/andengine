@@ -19,7 +19,7 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 	private MenuScene menuChildScene;
 	private final int MENU_RETOUR = 0;
 	private final int MENU_SON = 1;
-	private final int MENU_BOUTIQUE = 2;
+	
 	
 	public AnimatedSpriteMenuItem SOUND_MenuItem;
 	
@@ -38,19 +38,18 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 		menuChildScene.setPosition(0, 0);
 		
 		final IMenuItem retourMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_RETOUR, resourcesManager.retour_region, vbom), 1.2f, 1);
-		final IMenuItem boutiqueMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_BOUTIQUE, resourcesManager.boutique_region, vbom), 1.2f, 1);
 		
 		SOUND_MenuItem = new AnimatedSpriteMenuItem(MENU_SON, resourcesManager.son_region, vbom);
 		
 		menuChildScene.addMenuItem(retourMenuItem);
-		menuChildScene.addMenuItem(boutiqueMenuItem);
+		
 		menuChildScene.addMenuItem(SOUND_MenuItem);
 		
 		menuChildScene.buildAnimations();
 		menuChildScene.setBackgroundEnabled(false);
 		
 		retourMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 200);
-		boutiqueMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY());
+		
 		SOUND_MenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 100);
 		
 		
@@ -114,17 +113,30 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				{
 					SceneManager.getInstance().Sound_on = false;
 					SOUND_MenuItem.setCurrentTileIndex(1);
-					ResourcesManager.music_menu.resume();	
+					try
+					{
+						ResourcesManager.music_menu.resume();
+						ResourcesManager.music_game.resume();	
+					}
+					catch (Exception e)
+					{
+						
+					}
 				}
 				else
 				{
 					SceneManager.getInstance().Sound_on = true;
 					SOUND_MenuItem.setCurrentTileIndex(0);
-					ResourcesManager.music_menu.pause();
+					try
+					{
+						ResourcesManager.music_menu.pause();
+						ResourcesManager.music_game.pause();	
+					}
+					catch (Exception e)
+					{
+						
+					}
 				}
-				return true;
-			case MENU_BOUTIQUE:
-				SceneManager.getInstance().createBoutiqueScene();
 				return true;
 			default:
 				return false;

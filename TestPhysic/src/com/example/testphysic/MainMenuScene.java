@@ -24,6 +24,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 	private final int MENU_PLAY = 0;
 	private final int MENU_OPTIONS = 1;
 	private final int MENU_STATS = 2;
+	private final int MENU_BOUTIQUE = 3;
 	
 	//---------------------------------------------
 	// METHODS FROM SUPERCLASS
@@ -69,6 +70,9 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 			case MENU_STATS:
 				SceneManager.getInstance().createHighscoreScene();
 				return true;
+			case MENU_BOUTIQUE:
+				SceneManager.getInstance().createBoutiqueScene();
+				return true;
 			default:
 				return false;
 		}
@@ -100,18 +104,21 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 		final IMenuItem playMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_PLAY, resourcesManager.play_region, vbom), 1.2f, 1);
 		final IMenuItem optionsMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_OPTIONS, resourcesManager.options_region, vbom), 1.2f, 1);
 		final IMenuItem statMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_STATS, resourcesManager.stats_region, vbom), 1.2f, 1);
-		
+		final IMenuItem boutiqueMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_BOUTIQUE, resourcesManager.boutique_region, vbom), 1.2f, 1);
 		
 		menuChildScene.addMenuItem(playMenuItem);
 		menuChildScene.addMenuItem(optionsMenuItem);
 		menuChildScene.addMenuItem(statMenuItem);
+		menuChildScene.addMenuItem(boutiqueMenuItem);
 		
 		menuChildScene.buildAnimations();
 		menuChildScene.setBackgroundEnabled(false);
 		
-		playMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 100);
-		optionsMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY());
-		statMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 100);
+		playMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 150);
+		optionsMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 50);
+		statMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 50);
+		boutiqueMenuItem.setPosition(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 150);
+		
 		
 		menuChildScene.setOnMenuItemClickListener(this);
 		

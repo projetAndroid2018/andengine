@@ -3,6 +3,8 @@ package com.example.testphysic;
 import java.io.IOException;
 
 import org.andengine.engine.camera.Camera;
+import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
 import org.andengine.entity.scene.menu.item.IMenuItem;
@@ -10,13 +12,29 @@ import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
+import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.util.GLState;
+
+import android.graphics.Color;
+import android.view.MotionEvent;
+import android.widget.Scroller;
 
 import com.example.testphysic.SceneManager.SceneType;
 
-public class Highscore extends BaseScene implements IOnMenuItemClickListener
+public class Highscore extends BaseScene implements IOnMenuItemClickListener, IOnSceneTouchListener
 {
 
+	private float mTouchX = 0, mTouchY = 0, mTouchOffsetX = 0, mTouchOffsetY = 0;
+	
+	//cumulated stats
+			private String globalNumberEnemyKilled;
+			private String globalNumberCoinCollected;
+			private String globalNumberMeters;
+			private String globalScore;
+			private String globalNumberJumps;
+			private String globalNumberScenes;
+			private String globalNumberTrapsDestroyed;
+	
 	//Best stats
 		private String bestNumberEnemyKilled;
 		private String bestNumberCoinCollected;
@@ -36,6 +54,8 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 		switch(pMenuItem.getID())
 		{
 			case MENU_RETOUR:
+				camera.setChaseEntity(null); 
+				camera.setCenter(400, 240);
 				SceneManager.getInstance().createMenuScene();
 				return true;
 			default:
@@ -46,10 +66,27 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public void createScene() 
 	{
+		
+		this.setOnSceneTouchListener(this);
+		
 		createBackground();
 		createMenuChildScene();
 		
-
+		try {globalNumberCoinCollected = resourcesManager.read(GameScene.GLOBAL_NUMBER_COINS_COLLECTED_KEY);} 
+		catch (IOException e) { globalNumberCoinCollected = "ERROR";}
+		try {globalNumberEnemyKilled = resourcesManager.read(GameScene.GLOBAL_NUMBER_ENEMIES_DESTROYED_KEY);} 
+		catch (IOException e) { globalNumberEnemyKilled = "ERROR";}
+		try {globalNumberJumps = resourcesManager.read(GameScene.GLOBAL_NUMBER_JUMPS_KEY);} 
+		catch (IOException e) { globalNumberJumps = "ERROR";}
+		try {globalNumberMeters = resourcesManager.read(GameScene.GLOBAL_NUMBER_KILOMETERS_KEY);} 
+		catch (IOException e) { globalNumberMeters = "ERROR";}
+		try {globalNumberScenes = resourcesManager.read(GameScene.GLOBAL_NUMBER_SCENES_LOADED_KEY);} 
+		catch (IOException e) { globalNumberScenes = "ERROR";}
+		try {globalNumberTrapsDestroyed = resourcesManager.read(GameScene.GLOBAL_NUMBER_TRAPS_DESTROYED_KEY);} 
+		catch (IOException e) { globalNumberTrapsDestroyed = "ERROR";}
+		try {globalScore = resourcesManager.read(GameScene.GLOBAL_SCORE_KEY);} 
+		catch (IOException e) { globalScore = "ERROR";}
+		
 		try {bestNumberCoinCollected = resourcesManager.read(GameScene.BEST_NUMBER_COINS_COLLECTED_KEY);} 
 		catch (IOException e) { bestNumberCoinCollected = "ERROR";}
 		try {bestNumberEnemyKilled = resourcesManager.read(GameScene.BEST_NUMBER_ENEMIES_DESTROYED_KEY);} 
@@ -65,6 +102,8 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 		try {bestScore = resourcesManager.read(GameScene.BEST_SCORE_KEY);} 
 		catch (IOException e) { bestScore = "ERROR";}
 		
+		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 200,  resourcesManager.font, "BEST STATS : ", vbom));
+		
 		
 		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 200,  resourcesManager.font, "ENEMIES KILLED : " + bestNumberEnemyKilled, vbom));
 		attachChild(new Text(350, engine.getCamera().getCenterY() + 150, resourcesManager.font, " COINS COLLECTED : "   + bestNumberCoinCollected, vbom));
@@ -73,14 +112,23 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 		attachChild(new Text(350, engine.getCamera().getCenterY(), resourcesManager.font, "   NUMBER OF JUMP : "  + bestNumberJumps, vbom));
 		attachChild(new Text(350, engine.getCamera().getCenterY() - 50, resourcesManager.font, "  SCENES REACHED : "  + bestNumberScenes, vbom));
 		attachChild(new Text(350, engine.getCamera().getCenterY() - 100, resourcesManager.font, "  TRAPS DESTROYED : " +  bestNumberTrapsDestroyed, vbom));
+		
+		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 150,  resourcesManager.font2, "TOTAL STATS : ", vbom));
 
+		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 200,  resourcesManager.font, "ENEMIES KILLED : " + globalNumberEnemyKilled, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 250, resourcesManager.font, "TOTAL COINS COLLECTED : "   + globalNumberCoinCollected, vbom));
+		attachChild(new Text(400, engine.getCamera().getCenterY() - 300, resourcesManager.font, "TOTAL METERS :"  + globalNumberMeters, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 350, resourcesManager.font, "TOTAL SCORE : "  + globalScore, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 400, resourcesManager.font, " TOTAL  NUMBER OF JUMP : "  + globalNumberJumps, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 450, resourcesManager.font, " TOTAL SCENES REACHED : "  + globalNumberScenes, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 500, resourcesManager.font, " TOTAL TRAPS DESTROYED : " +  globalNumberTrapsDestroyed, vbom));
 		
 	}
 
 	
 	private void createBackground()
 	{
-		attachChild(new Sprite(400, 240, engine.getCamera().getWidth(), engine.getCamera().getHeight(), 
+		attachChild(new Sprite(400, 100, engine.getCamera().getWidth(), engine.getCamera().getHeight()*3, 
 				resourcesManager.background_hight, vbom)
 		{
     		@Override
@@ -115,6 +163,8 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public void onBackKeyPressed() 
 	{
+		camera.setChaseEntity(null); 
+		camera.setCenter(400, 240);
 		SceneManager.getInstance().createMenuScene();
 	}
 
@@ -130,6 +180,33 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pTouchEvent) 
+	{
+		if(pTouchEvent.getAction() == MotionEvent.ACTION_UP)
+        {
+                //mTouchX = pTouchEvent.getMotionEvent().getX();
+                mTouchY = pTouchEvent.getMotionEvent().getY();
+        }
+        else if(pTouchEvent.getAction() == MotionEvent.ACTION_MOVE)
+        {
+                //float newX = pTouchEvent.getMotionEvent().getX();
+                float newY = pTouchEvent.getMotionEvent().getY();
+               
+                //mTouchOffsetX = (newX - mTouchX);
+                mTouchOffsetY = (newY - mTouchY);
+               
+                //float newScrollX = this.camera.getCenterX() - mTouchOffsetX;
+                float newScrollY = this.camera.getCenterY() - mTouchOffsetY;
+               
+                this.camera.setCenter(camera.getCenterX(), newScrollY);
+               
+                //mTouchX = newX;
+                mTouchY = newY;
+        }
+        return true;
 	}
 
 }

@@ -41,6 +41,7 @@ public class ResourcesManager
 	public VertexBufferObjectManager vbom;
 	
 	public Font font;
+	public Font font2;
 	
 	//---------------------------------------------
 	// TEXTURES & TEXTURE REGIONS
@@ -170,9 +171,9 @@ public class ResourcesManager
 	private void loadHightGraphics()
 	{
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
-		hightTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 512, TextureOptions.BILINEAR);
+		hightTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
         retour_region_hight = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hightTextureAtlas, activity, "retour.png");
-        background_hight = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hightTextureAtlas, activity, "background_stat.png");
+        background_hight = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hightTextureAtlas, activity, "menu_screen_hight.png");
         
         try 
     	{
@@ -190,7 +191,9 @@ public class ResourcesManager
 		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 50, true, Color.WHITE, 2, Color.BLACK);
+		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "cambriaz.ttf", 50, true, Color.RED, 2, Color.BLACK);
 		font.load();
+		font2.load();
 
 	}
 	public void loadBoutiqueResources()
@@ -266,7 +269,6 @@ public class ResourcesManager
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
         optionTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 512, TextureOptions.BILINEAR);
         retour_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(optionTextureAtlas, activity, "retour.png");
-        boutique_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(optionTextureAtlas, activity, "boutique.png");
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("music/");
         son_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(optionTextureAtlas, activity, "son.png", 2, 1);
 
@@ -348,6 +350,7 @@ public class ResourcesManager
         play_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "play.png");
         options_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "options.png");
         stats_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity,"stats.png");
+        boutique_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(menuTextureAtlas, activity, "boutique.png");
         
     	try 
     	{

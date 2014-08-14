@@ -26,7 +26,7 @@ public class Boutique extends BaseScene implements IOnMenuItemClickListener
 		switch(pMenuItem.getID())
 		{
 			case MENU_RETOUR:
-				SceneManager.getInstance().createOptionScene();
+				SceneManager.getInstance().createMenuScene();
 				return true;
 			default:
 				return false;
@@ -82,7 +82,7 @@ public class Boutique extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public void onBackKeyPressed() 
 	{
-		SceneManager.getInstance().createOptionScene();
+		SceneManager.getInstance().createMenuScene();
 	}
 
 	@Override
