@@ -2,9 +2,9 @@ package com.example.testphysic;
 
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.IEntity;
@@ -23,7 +23,6 @@ import org.andengine.entity.text.TextOptions;
 import org.andengine.extension.physics.box2d.FixedStepPhysicsWorld;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.view.RenderSurfaceView;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
 import org.andengine.util.level.EntityLoader;
@@ -40,8 +39,6 @@ import Platforms.MovingYPlatform;
 import Platforms.SemiStaticPlatform;
 import Platforms.StaticPlatform;
 
-import android.view.Gravity;
-import android.widget.FrameLayout;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -53,9 +50,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.example.testphysic.LevelCompleteWindow.StarsCount;
 import com.example.testphysic.SceneManager.SceneType;
 import com.example.testphysic.enemies.Enemy1;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 
 
 public class GameScene extends BaseScene implements IOnSceneTouchListener
@@ -71,6 +65,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final String TAG_ENTITY_ATTRIBUTE_X = "x";
 	private static final String TAG_ENTITY_ATTRIBUTE_Y = "y";
 	private static final String TAG_ENTITY_ATTRIBUTE_TYPE = "type";
+	private static final String TAG_ENTITY_ATTRIBUTE_WIDTH = "width";
+	private static final String TAG_ENTITY_ATTRIBUTE_HEIGHT = "height";
+	private static final String TAG_ENTITY_ATTRIBUTE_MOVE = "move";
 	
 
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1 = "platform1";
@@ -126,7 +123,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 	//In Game
 	private boolean firstTouch = false;
-	private int levelToLoad;
+	public static int levelToLoad = 0;
 	private float angle = 0;
 	private float shift;
 	private boolean updateBalance;
@@ -309,38 +306,41 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				final int x = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_X);
 				final int y = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_Y);
 				final String type = SAXUtils.getAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_TYPE);
+				final int width = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_WIDTH);
+				final int height = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_HEIGHT);
+				final int move = SAXUtils.getIntAttributeOrThrow(pAttributes, TAG_ENTITY_ATTRIBUTE_MOVE);
 				
 				final Sprite levelObject;
 				
 				if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM1))
 				{
-					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform1_region);
+					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, width, height, vbom, camera, physicsWorld, resourcesManager.platform1_region);
 				} 
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM2))
 				{
-					levelObject = new SemiStaticPlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform2_region);
+					levelObject = new SemiStaticPlatform(x + ((levelToLoad-1) *800), y, width, height, vbom, camera, physicsWorld, resourcesManager.platform2_region);
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM3))
 				{
-					levelObject = new FragilePlatform(x + ((levelToLoad-1) *800), y, 100, 34, vbom, camera, physicsWorld, resourcesManager.platform3_region);
+					levelObject = new FragilePlatform(x + ((levelToLoad-1) *800), y, width, height, vbom, camera, physicsWorld, resourcesManager.platform3_region);
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM4))
 				{
-					levelObject = new MovingXPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform4_region);					
+					levelObject = new MovingXPlatform(x + ((levelToLoad-1) *800), y, width, height, move, vbom, camera, physicsWorld, resourcesManager.platform4_region);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_PLATFORM5))
 				{
-					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, 100, 34, 75, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
+					levelObject = new MovingYPlatform(x + ((levelToLoad-1) *800), y, width, height, move, vbom, camera, physicsWorld, resourcesManager.platform5_region);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_LINE))
 				{
-					StaticPlatform line = new StaticPlatform(x + ((levelToLoad-1) *800), y, 550, 50, vbom, camera, physicsWorld, resourcesManager.lineRegion);
+					StaticPlatform line = new StaticPlatform(x + ((levelToLoad-1) *800), y, width, height, vbom, camera, physicsWorld, resourcesManager.lineRegion);
 					line.body.setUserData("line");
 					levelObject = line;
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_STICK))
 				{
-					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, 50, 50, vbom, camera, physicsWorld, resourcesManager.stickRegion);					
+					levelObject = new StaticPlatform(x + ((levelToLoad-1) *800), y, width, height, vbom, camera, physicsWorld, resourcesManager.stickRegion);					
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_COIN))
 				{
@@ -398,12 +398,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								addToScore(0);
 								if(this.getX() > ((levelToLoad-1)*800))
 								{
+									
 									levelToLoad++;
+									if(levelToLoad % 2 == 0 && player.speedX < 15)
+										player.speedX += 0.5f;
 									numberScenesLoaded++;
-									if(levelToLoad < 2)
+									if(levelToLoad <= 4)
 										loadLevel(levelToLoad);
 									else
-										loadLevel(2);
+										loadLevel(4);
 								}
 							}						
 							

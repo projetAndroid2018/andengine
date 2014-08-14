@@ -31,6 +31,11 @@ public abstract class Player extends AnimatedSprite
 	public boolean collides;
 	
 	public float speedX;
+	
+	private float heightJump;
+	
+	//Flag for double jump
+	private boolean hasjumped;
 
 	// ---------------------------------------------
 	// CONSTRUCTOR
@@ -44,6 +49,8 @@ public abstract class Player extends AnimatedSprite
 		life = 10;
 		collides = false;
 		speedX = 6;
+		heightJump = 8;
+		hasjumped = false;
 	}
 	
 	// ---------------------------------------------
@@ -76,7 +83,7 @@ public abstract class Player extends AnimatedSprite
 					body.setLinearVelocity(new Vector2(0, body.getLinearVelocity().y));
 				
 				level();
-				checkLife();
+				checkLife();				
 	        }
 		});
 	}
@@ -93,10 +100,22 @@ public abstract class Player extends AnimatedSprite
 	public void jump()
 	{
 		if (footContacts < 1) 
-		{
 			return; 
+		
+		
+		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, heightJump));
+		
+		//Check for double jump
+		if(!hasjumped)
+			hasjumped = true;
+		else
+		{
+			hasjumped = false;
+			decreaseFootContacts();
 		}
-		body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 10));
+		//If player hasJumped once, is able to jump another time
+		if(hasjumped)
+			increaseFootContacts();
 
 		GameScene.numberJumps++;
 	}
