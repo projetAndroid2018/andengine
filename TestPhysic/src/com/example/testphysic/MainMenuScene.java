@@ -68,7 +68,7 @@ public class MainMenuScene extends BaseScene implements IOnMenuItemClickListener
 				SceneManager.getInstance().createOptionScene();
 				return true;
 			case MENU_STATS:
-				SceneManager.getInstance().createHighscoreScene();
+				SceneManager.getInstance().createTransitionScene();
 				return true;
 			case MENU_BOUTIQUE:
 				SceneManager.getInstance().createBoutiqueScene();

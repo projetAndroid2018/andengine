@@ -23,17 +23,9 @@ import com.example.testphysic.SceneManager.SceneType;
 
 public class Highscore extends BaseScene implements IOnMenuItemClickListener, IOnSceneTouchListener
 {
-
-	private float mTouchX = 0, mTouchY = 0, mTouchOffsetX = 0, mTouchOffsetY = 0;
 	
-	//cumulated stats
-			private String globalNumberEnemyKilled;
-			private String globalNumberCoinCollected;
-			private String globalNumberMeters;
-			private String globalScore;
-			private String globalNumberJumps;
-			private String globalNumberScenes;
-			private String globalNumberTrapsDestroyed;
+	//Scrolling
+	private float mTouchX = 0, mTouchY = 0, mTouchOffsetX = 0, mTouchOffsetY = 0;
 	
 	//Best stats
 		private String bestNumberEnemyKilled;
@@ -56,7 +48,7 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
 			case MENU_RETOUR:
 				camera.setChaseEntity(null); 
 				camera.setCenter(400, 240);
-				SceneManager.getInstance().createMenuScene();
+				SceneManager.getInstance().createTransitionScene();
 				return true;
 			default:
 				return false;
@@ -71,21 +63,6 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
 		
 		createBackground();
 		createMenuChildScene();
-		
-		try {globalNumberCoinCollected = resourcesManager.read(GameScene.GLOBAL_NUMBER_COINS_COLLECTED_KEY);} 
-		catch (IOException e) { globalNumberCoinCollected = "ERROR";}
-		try {globalNumberEnemyKilled = resourcesManager.read(GameScene.GLOBAL_NUMBER_ENEMIES_DESTROYED_KEY);} 
-		catch (IOException e) { globalNumberEnemyKilled = "ERROR";}
-		try {globalNumberJumps = resourcesManager.read(GameScene.GLOBAL_NUMBER_JUMPS_KEY);} 
-		catch (IOException e) { globalNumberJumps = "ERROR";}
-		try {globalNumberMeters = resourcesManager.read(GameScene.GLOBAL_NUMBER_KILOMETERS_KEY);} 
-		catch (IOException e) { globalNumberMeters = "ERROR";}
-		try {globalNumberScenes = resourcesManager.read(GameScene.GLOBAL_NUMBER_SCENES_LOADED_KEY);} 
-		catch (IOException e) { globalNumberScenes = "ERROR";}
-		try {globalNumberTrapsDestroyed = resourcesManager.read(GameScene.GLOBAL_NUMBER_TRAPS_DESTROYED_KEY);} 
-		catch (IOException e) { globalNumberTrapsDestroyed = "ERROR";}
-		try {globalScore = resourcesManager.read(GameScene.GLOBAL_SCORE_KEY);} 
-		catch (IOException e) { globalScore = "ERROR";}
 		
 		try {bestNumberCoinCollected = resourcesManager.read(GameScene.BEST_NUMBER_COINS_COLLECTED_KEY);} 
 		catch (IOException e) { bestNumberCoinCollected = "ERROR";}
@@ -102,27 +79,18 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
 		try {bestScore = resourcesManager.read(GameScene.BEST_SCORE_KEY);} 
 		catch (IOException e) { bestScore = "ERROR";}
 		
+		
+		
 		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 200,  resourcesManager.font, "BEST STATS : ", vbom));
 		
 		
-		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 200,  resourcesManager.font, "ENEMIES KILLED : " + bestNumberEnemyKilled, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() + 150, resourcesManager.font, " COINS COLLECTED : "   + bestNumberCoinCollected, vbom));
-		attachChild(new Text(400, engine.getCamera().getCenterY() + 100, resourcesManager.font, "METERS :"  + bestNumberMeters, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() + 50, resourcesManager.font, "SCORE : "  + bestScore, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY(), resourcesManager.font, "   NUMBER OF JUMP : "  + bestNumberJumps, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 50, resourcesManager.font, "  SCENES REACHED : "  + bestNumberScenes, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 100, resourcesManager.font, "  TRAPS DESTROYED : " +  bestNumberTrapsDestroyed, vbom));
-		
-		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 150,  resourcesManager.font2, "TOTAL STATS : ", vbom));
-
-		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() - 200,  resourcesManager.font, "ENEMIES KILLED : " + globalNumberEnemyKilled, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 250, resourcesManager.font, "TOTAL COINS COLLECTED : "   + globalNumberCoinCollected, vbom));
-		attachChild(new Text(400, engine.getCamera().getCenterY() - 300, resourcesManager.font, "TOTAL METERS :"  + globalNumberMeters, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 350, resourcesManager.font, "TOTAL SCORE : "  + globalScore, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 400, resourcesManager.font, " TOTAL  NUMBER OF JUMP : "  + globalNumberJumps, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 450, resourcesManager.font, " TOTAL SCENES REACHED : "  + globalNumberScenes, vbom));
-		attachChild(new Text(350, engine.getCamera().getCenterY() - 500, resourcesManager.font, " TOTAL TRAPS DESTROYED : " +  globalNumberTrapsDestroyed, vbom));
-		
+		attachChild(new Text(engine.getCamera().getCenterX(), engine.getCamera().getCenterY() + 150,  resourcesManager.font, "Enemies Killed : " + bestNumberEnemyKilled, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() + 100, resourcesManager.font,                              "Coins Collected : "   + bestNumberCoinCollected, vbom));
+		attachChild(new Text(400, engine.getCamera().getCenterY() + 50, resourcesManager.font,                               "Meters :"  + bestNumberMeters, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() , resourcesManager.font,                                   "Score : "  + bestScore, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 50, resourcesManager.font,                               "Number Of Jump : "  + bestNumberJumps, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 100, resourcesManager.font,                              "Scenes Reached : "  + bestNumberScenes, vbom));
+		attachChild(new Text(350, engine.getCamera().getCenterY() - 150, resourcesManager.font,                              "Traps Destroyed : " +  bestNumberTrapsDestroyed, vbom));
 	}
 
 	
@@ -185,9 +153,9 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pTouchEvent) 
 	{
-		if(pTouchEvent.getAction() == MotionEvent.ACTION_UP)
+		if(pTouchEvent.getAction() == MotionEvent.ACTION_DOWN)
         {
-                //mTouchX = pTouchEvent.getMotionEvent().getX();
+               // mTouchX = pTouchEvent.getMotionEvent().getX();
                 mTouchY = pTouchEvent.getMotionEvent().getY();
         }
         else if(pTouchEvent.getAction() == MotionEvent.ACTION_MOVE)
@@ -201,12 +169,11 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
                 //float newScrollX = this.camera.getCenterX() - mTouchOffsetX;
                 float newScrollY = this.camera.getCenterY() - mTouchOffsetY;
                
-                this.camera.setCenter(camera.getCenterX(), newScrollY);
+                this.camera.setCenter(this.camera.getCenterX(), newScrollY);
                
                 //mTouchX = newX;
                 mTouchY = newY;
         }
         return true;
 	}
-
 }

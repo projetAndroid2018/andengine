@@ -134,6 +134,18 @@ public class ResourcesManager
 	private BuildableBitmapTextureAtlas hightTextureAtlas;
 	public ITextureRegion retour_region_hight;
 	public TextureRegion background_hight;
+	
+	//transition
+	private BuildableBitmapTextureAtlas transitionTextureAtlas;
+	public ITextureRegion retour_region_transition;
+	public ITextureRegion region_global;
+	public ITextureRegion region_best;
+	public TextureRegion background_transition;
+		
+	//global
+	private BuildableBitmapTextureAtlas globalTextureAtlas;
+	public ITextureRegion retour_region_global;
+	public TextureRegion background_global;
 		
 	//SOUND
 	public static Music music_menu;
@@ -163,6 +175,62 @@ public class ResourcesManager
 		    e.printStackTrace();
 		}
 	}
+	public void loadTransitionResources()
+	{
+		loadTransitionGraphics();
+	}
+	private void loadTransitionGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		transitionTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
+        retour_region_transition = BitmapTextureAtlasTextureRegionFactory.createFromAsset(transitionTextureAtlas, activity, "retour.png");
+        region_best = BitmapTextureAtlasTextureRegionFactory.createFromAsset(transitionTextureAtlas, activity, "beststats.png");
+        region_global = BitmapTextureAtlasTextureRegionFactory.createFromAsset(transitionTextureAtlas, activity, "cumulatedstats.png");
+        background_transition = BitmapTextureAtlasTextureRegionFactory.createFromAsset(transitionTextureAtlas, activity, "menu_screen_hight.png");
+        
+        try 
+    	{
+			this.transitionTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.transitionTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	public void loadGlobalResources()
+	{
+		loadGlobalGraphics();
+		loadGlobalFonts();
+	}
+	private void loadGlobalGraphics()
+	{
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		globalTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 1024, TextureOptions.BILINEAR);
+        retour_region_global = BitmapTextureAtlasTextureRegionFactory.createFromAsset(globalTextureAtlas, activity, "retour.png");
+        background_global = BitmapTextureAtlasTextureRegionFactory.createFromAsset(globalTextureAtlas, activity, "menu_screen_hight.png");
+        
+        try 
+    	{
+			this.globalTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			this.globalTextureAtlas.load();
+		} 
+    	catch (final TextureAtlasBuilderException e)
+    	{
+			Debug.e(e);
+		}
+	}
+	private void loadGlobalFonts()
+	{
+		FontFactory.setAssetBasePath("font/");
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 30, true, Color.WHITE, 2, Color.WHITE);
+		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font2.otf", 30, true, Color.WHITE, 2, Color.WHITE);
+		font.load();
+		font2.load();
+
+	}
 	public void loadHightResources()
 	{
 		loadHightGraphics();
@@ -190,8 +258,8 @@ public class ResourcesManager
 		FontFactory.setAssetBasePath("font/");
 		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 50, true, Color.WHITE, 2, Color.BLACK);
-		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "cambriaz.ttf", 50, true, Color.RED, 2, Color.BLACK);
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 30, true, Color.WHITE, 2, Color.WHITE);
+		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font2.otf", 30, true, Color.WHITE, 2, Color.WHITE);
 		font.load();
 		font2.load();
 

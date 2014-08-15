@@ -22,6 +22,8 @@ public class SceneManager
 	private BaseScene statScene;
 	private BaseScene highscoreScene;
 	private BaseScene boutiqueScene;
+	private BaseScene globalScene;
+	private BaseScene transitionScene;
 	
 	
 	//---------------------------------------------
@@ -46,6 +48,8 @@ public class SceneManager
 		SCENE_STAT,
 		SCENE_HIGHSCORE,
 		SCENE_BOUTIQUE,
+		SCENE_GLOBAL,
+		SCENE_TRANSITION,
 	}
 	
 	//---------------------------------------------
@@ -87,9 +91,27 @@ public class SceneManager
 			case SCENE_BOUTIQUE:
 				setScene(boutiqueScene);
 				break;
+			case SCENE_GLOBAL:
+				setScene(globalScene);
+				break;
+			case SCENE_TRANSITION:
+				setScene(transitionScene);
+				break;
 			default:
 				break;
 		}
+	}
+	public void createGlobalScene()
+	{
+		ResourcesManager.getInstance().loadGlobalResources();
+		globalScene = new GlobalScene();
+        SceneManager.getInstance().setScene(globalScene);
+	}
+	public void createTransitionScene()
+	{
+		ResourcesManager.getInstance().loadTransitionResources();
+		transitionScene = new transition();
+        SceneManager.getInstance().setScene(transitionScene);
 	}
 	public void createBoutiqueScene()
 	{
