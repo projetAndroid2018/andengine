@@ -56,6 +56,8 @@ public class GlobalScene extends BaseScene implements IOnMenuItemClickListener, 
 	@Override
 	public void createScene() 
 	{
+		camera.setBounds(0, -400, 800, 480); // here we set camera bounds
+		camera.setBoundsEnabled(true);
 		
 		this.setOnSceneTouchListener(this);
 		
@@ -149,7 +151,7 @@ public class GlobalScene extends BaseScene implements IOnMenuItemClickListener, 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pTouchEvent) 
 	{
-		if(pTouchEvent.getAction() == MotionEvent.ACTION_DOWN)
+		if(pTouchEvent.getAction() == MotionEvent.ACTION_DOWN  | pTouchEvent.getAction() == MotionEvent.ACTION_UP)
         {
                 //mTouchX = pTouchEvent.getMotionEvent().getX();
                 mTouchY = pTouchEvent.getMotionEvent().getY();
@@ -163,7 +165,7 @@ public class GlobalScene extends BaseScene implements IOnMenuItemClickListener, 
                 mTouchOffsetY = (newY - mTouchY);
                
                 //float newScrollX = this.camera.getCenterX() - mTouchOffsetX;
-                float newScrollY = this.camera.getCenterY() - mTouchOffsetY;
+                float newScrollY = this.camera.getCenterY() + mTouchOffsetY;
                
                 this.camera.setCenter(this.camera.getCenterX(), newScrollY);
                

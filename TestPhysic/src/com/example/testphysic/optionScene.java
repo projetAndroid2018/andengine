@@ -58,11 +58,11 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 		setChildScene(menuChildScene);
 		if (SceneManager.getInstance().Sound_on)
 		{
-			SOUND_MenuItem.setCurrentTileIndex(0);
+			SOUND_MenuItem.setCurrentTileIndex(1);
 		}
 		else
 		{
-			SOUND_MenuItem.setCurrentTileIndex(1);
+			SOUND_MenuItem.setCurrentTileIndex(0);
 		}
 	}
 	
@@ -112,7 +112,7 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				if (SceneManager.getInstance().Sound_on)
 				{
 					SceneManager.getInstance().Sound_on = false;
-					SOUND_MenuItem.setCurrentTileIndex(1);
+					SOUND_MenuItem.setCurrentTileIndex(0);
 					try
 					{
 						ResourcesManager.music_menu.resume();
@@ -126,7 +126,7 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				else
 				{
 					SceneManager.getInstance().Sound_on = true;
-					SOUND_MenuItem.setCurrentTileIndex(0);
+					SOUND_MenuItem.setCurrentTileIndex(1);
 					try
 					{
 						ResourcesManager.music_menu.pause();

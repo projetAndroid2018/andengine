@@ -128,6 +128,8 @@ public class ResourcesManager
 	//boutique
 	private BuildableBitmapTextureAtlas boutiqueTextureAtlas;
 	public ITextureRegion retour_region_boutique;
+	public ITextureRegion validez_region_boutique;
+	public ITextureRegion region_coin;
 	public TextureRegion background_boutique;
 	
 	//hightscore
@@ -146,6 +148,8 @@ public class ResourcesManager
 	private BuildableBitmapTextureAtlas globalTextureAtlas;
 	public ITextureRegion retour_region_global;
 	public TextureRegion background_global;
+
+
 		
 	//SOUND
 	public static Music music_menu;
@@ -271,9 +275,14 @@ public class ResourcesManager
 	}
 	private void loadBoutiqueGraphics()
 	{
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
+		
+		
 		boutiqueTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 512, TextureOptions.BILINEAR);
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
+		region_coin = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "coin.png");
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");
         retour_region_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "retour.png");
+        validez_region_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "boutonvalidez.png");
         background_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "menu_screen.png");
         
         try 
