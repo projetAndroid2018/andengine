@@ -1,5 +1,6 @@
 package com.example.testphysic;
 
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
@@ -8,7 +9,6 @@ import org.andengine.entity.scene.menu.item.SpriteMenuItem;
 import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.util.GLState;
 
 import com.example.testphysic.SceneManager.SceneType;
@@ -16,6 +16,25 @@ import com.example.testphysic.SceneManager.SceneType;
 public class Boutique extends BaseScene implements IOnMenuItemClickListener
 {
 
+	//-------------------------------------------------------------------------
+	//HADRIEN HADRIEN HADRIEN//
+	//INSTRUCTIONS POUR LA BOUTIQUE
+	
+	//INCREMENTE de 5 lorsqu'un ***_FIVE_GAME_KEY est acheté
+	//INCREMENTE de 1 lorsqu'un ***_ONE_GAME_KEY est acheté
+	//METTRE à 1 lorsqu'un ****GLOBAL_KEY est acheté
+	//	try {resourcesManager.write(GameScene.TWO_LIVES_GLOBAL_KEY, "1");} catch (IOException e) {e.printStackTrace();}
+	//  try {resourcesManager.write(GameScene.TWO_LIVES_FIVE_GAME_KEY, "5");} catch (IOException e) {e.printStackTrace();}
+	//	try {resourcesManager.write(GameScene.TWO_LIVES_ONE_GAME_KEY, "1");} catch (IOException e) {e.printStackTrace();}
+	//
+	//	try {resourcesManager.write(GameScene.ONE_LIFE_GLOBAL_KEY, "1");} catch (IOException e) {e.printStackTrace();}
+	//  try {resourcesManager.write(GameScene.ONE_LIFE_FIVE_GAME_KEY, "5");} catch (IOException e) {e.printStackTrace();}
+	//	try {resourcesManager.write(GameScene.ONE_LIFE_ONE_GAME_KEY, "1");} catch (IOException e) {e.printStackTrace();}
+	//
+	//
+	//---------------------------------------------------------------------------
+	
+	
 	private final int MENU_RETOUR = 0;
 	private final int MENU_VALIDEZ = 1;
 	
@@ -23,8 +42,8 @@ public class Boutique extends BaseScene implements IOnMenuItemClickListener
 	private MenuScene menuChildScene;
 	
 	private Sprite coinSprite;
-	private Text cointext;
-	private String coinstring  = "??";
+	//private Text cointext;
+	//private String coinstring  = "??";
 	
 	@Override
 	public boolean onMenuItemClicked(MenuScene pMenuScene, IMenuItem pMenuItem,

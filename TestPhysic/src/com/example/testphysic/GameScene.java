@@ -2,7 +2,6 @@ package com.example.testphysic;
 
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.timer.ITimerCallback;
@@ -90,6 +89,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_RAISER = "speedplus";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_SPEED_REDUCER = "speedminus";
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_MYSTERY_BONUS = "mystery";
+	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HEART = "heart";
 	
 	//PERTURBATIONS
 	private static final Object TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_VERTICAL_PERTURBATIONS = "verticalper";
@@ -105,6 +105,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private TiledSprite heart1;
 	private TiledSprite heart2;
 	private TiledSprite heart3;
+	private TiledSprite heart4;
+	private TiledSprite heart5
+	;
 	private AnimatedSprite area;
 	private static long[] animateArea = {100 , 0};
 	private static long[] animateArea2 = {0 ,100};
@@ -217,6 +220,19 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//Score
 	public final static String GLOBAL_SCORE_KEY = "GSK";
 	
+	//-----------------------------------------
+	//BONUS
+	//------------------------------------------
+	
+	public final static String ONE_LIFE_GLOBAL_KEY = "OLGK";
+	public final static String TWO_LIVES_GLOBAL_KEY = "TLGK";
+	
+	public final static String ONE_LIFE_FIVE_GAME_KEY = "OLFGK";
+	public final static String TWO_LIVES_FIVE_GAME_KEY = "TLVGK";
+	
+	public final static String ONE_LIFE_ONE_GAME_KEY = "OLOGK";
+	public final static String TWO_LIVES_ONE_GAME_KEY= "TLOGK";
+	
 		
 
 	
@@ -227,6 +243,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		InitializeGameStats();
 		InitializeBestStats();
 		InitializedGlobal();
+		InitializedBonus();
 		Bullet.canFire = true;
 		createBackground();
 		resourcesManager.loadHUDGraphics();
@@ -238,6 +255,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		levelCompleteWindow = new LevelCompleteWindow(vbom);
 		setOnSceneTouchListener(this); 
 	}
+
 
 	@Override
 	public void onBackKeyPressed()
@@ -419,27 +437,52 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 									heart1.setCurrentTileIndex(1);
 									heart2.setCurrentTileIndex(1);
 									heart3.setCurrentTileIndex(1);
+									heart4.setVisible(false);
+									heart5.setVisible(false);
 									onDie();
 									break;
 								case 1:
 									heart1.setCurrentTileIndex(0);
 									heart2.setCurrentTileIndex(1);
 									heart3.setCurrentTileIndex(1);
+									heart4.setVisible(false);
+									heart5.setVisible(false);
 									break;
 								case 2:
 									heart1.setCurrentTileIndex(0);
 									heart2.setCurrentTileIndex(0);
 									heart3.setCurrentTileIndex(1);
+									heart4.setVisible(false);
+									heart5.setVisible(false);
 									break;
 								case 3:
 									heart1.setCurrentTileIndex(0);
 									heart2.setCurrentTileIndex(0);
 									heart3.setCurrentTileIndex(0);
+									heart4.setVisible(false);
+									heart5.setVisible(false);
+									break;
+								case 4:
+									heart1.setCurrentTileIndex(0);
+									heart2.setCurrentTileIndex(0);
+									heart3.setCurrentTileIndex(0);
+									heart4.setCurrentTileIndex(0);
+									heart5.setVisible(false);
+									break;
+								case 5:
+									heart1.setCurrentTileIndex(0);
+									heart2.setCurrentTileIndex(0);
+									heart3.setCurrentTileIndex(0);
+									heart4.setCurrentTileIndex(0);
+									heart5.setCurrentTileIndex(0);
 									break;
 								}
 							}
+							
+							
 						};
 						initialPosition = x;
+						checkNumberLifeCharacter();
 						levelObject = player;
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1))
@@ -673,6 +716,22 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						};
 					};
 				}
+				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_HEART))
+				{
+					levelObject = new AnimatedSprite(x + ((levelToLoad-1) *800), y, width, height, resourcesManager.heartsRegion, vbom)
+					{
+						@Override
+						protected void onManagedUpdate(float pSecondsElapsed)
+						{
+							setCurrentTileIndex(0);
+							if(this.collidesWith(player))
+							{
+								setVisible(false);
+								player.increaseLife();
+							}
+						};
+					};
+				}
 				else
 				{
 					throw new IllegalArgumentException();
@@ -681,6 +740,86 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				levelObject.setCullingEnabled(true);
 
 				return levelObject;
+			}
+
+			private void checkNumberLifeCharacter() throws IOException 
+			{
+				//GLOBAL
+				final int ONE_LIFE_GLOBAL = Integer.parseInt(resourcesManager.read(ONE_LIFE_GLOBAL_KEY));
+				final int TWO_LIVES_GLOBAL = Integer.parseInt(resourcesManager.read(TWO_LIVES_GLOBAL_KEY));
+
+				//FIVE GAME
+				final int ONE_LIFE_FIVE_GAME = Integer.parseInt(resourcesManager.read(ONE_LIFE_FIVE_GAME_KEY));
+				final int TWO_LIVES_FIVE_GAME = Integer.parseInt(resourcesManager.read(TWO_LIVES_FIVE_GAME_KEY));
+				
+				//ONE 
+				final int ONE_LIFE_ONE_GAME = Integer.parseInt(resourcesManager.read(ONE_LIFE_ONE_GAME_KEY));
+				final int TWO_LIVES_ONE_GAME = Integer.parseInt(resourcesManager.read(TWO_LIVES_ONE_GAME_KEY));
+				
+				//--------------------------------
+				//CHECK FOR TWO BONUS LIVES
+				if(TWO_LIVES_GLOBAL <= 0)
+				{
+					if(TWO_LIVES_FIVE_GAME <= 0)
+					{
+						if(TWO_LIVES_ONE_GAME <= 0)
+						{
+							//CHECK FOR ONE BONUS LIFE
+							if(ONE_LIFE_GLOBAL <= 0)
+							{
+								if(ONE_LIFE_FIVE_GAME <= 0)
+								{
+									if(ONE_LIFE_ONE_GAME <= 0)
+									{
+										player.life = player.life;
+									}
+									else
+									{
+										//player = 4 lives for 1 game
+										player.life = 4;
+										
+										int numberTime = (Integer.parseInt(resourcesManager.read(ONE_LIFE_ONE_GAME_KEY))) - 1;
+										resourcesManager.write(ONE_LIFE_ONE_GAME_KEY, Integer.toString(numberTime));
+									}
+								}
+								else
+								{
+									//player = 4 lives for 5 games
+									player.life = 4;
+									
+									int numberTime = (Integer.parseInt(resourcesManager.read(ONE_LIFE_FIVE_GAME_KEY))) - 1;
+									resourcesManager.write(ONE_LIFE_FIVE_GAME_KEY, Integer.toString(numberTime));
+								}
+							}
+							else
+							{
+								//player = 4 lives at anytime
+								player.life = 4;
+							}
+						}
+						else
+						{
+							//player = 5 lives for 1 game
+							player.life = 5;
+							
+							int numberTime = (Integer.parseInt(resourcesManager.read(TWO_LIVES_ONE_GAME_KEY))) - 1;
+							resourcesManager.write(TWO_LIVES_ONE_GAME_KEY, Integer.toString(numberTime));
+						}
+					}
+					else
+					{
+						//player = 5 lives for 5 games
+						player.life = 5;
+						
+						int numberTime = (Integer.parseInt(resourcesManager.read(TWO_LIVES_FIVE_GAME_KEY))) - 1;
+						resourcesManager.write(TWO_LIVES_FIVE_GAME_KEY, Integer.toString(numberTime));
+					}
+				}
+				else
+				{
+					//player = 5 lives at anytime
+					player.life = 5;
+				}	
 			}
 		});
 		
@@ -715,15 +854,21 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		heart1 = new TiledSprite(60, 380, 50, 50, ResourcesManager.getInstance().heartsRegion, vbom);
 		heart2 = new TiledSprite(120, 380, 50, 50, ResourcesManager.getInstance().heartsRegion, vbom);
 		heart3 = new TiledSprite(180, 380, 50, 50, ResourcesManager.getInstance().heartsRegion, vbom);
-		 
+		heart4 =  new TiledSprite(240, 380, 50, 50, ResourcesManager.getInstance().heartsRegion, vbom);
+		heart5 = new TiledSprite(300, 380, 50, 50, ResourcesManager.getInstance().heartsRegion, vbom);
+		
 		heart1.setCurrentTileIndex(1);
 		heart2.setCurrentTileIndex(1);
 		heart3.setCurrentTileIndex(1);
+		heart4.setCurrentTileIndex(1);
+		heart5.setCurrentTileIndex(1);
 		
 		
 		gameHUD.attachChild(heart1);
 		gameHUD.attachChild(heart2);
 		gameHUD.attachChild(heart3);
+		gameHUD.attachChild(heart4);
+		gameHUD.attachChild(heart5);
 		
 		 
 		area = new AnimatedSprite(500, 420, 300, 100, resourcesManager.area, vbom);
@@ -754,14 +899,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
             			}
             			
             		}
-            	
-            		@Override
-            		protected void onManagedUpdate(float pSecondsElapsed)
-            		{
-            			super.onManagedUpdate(pSecondsElapsed);
-            			body.applyForce(0, -physicsWorld.getGravity().y * body.getMass(), body.getWorldCenter().x, body.getWorldCenter().y);
-            		}
-
 					@Override
 					public void checkCollides() 
 					{
@@ -1313,6 +1450,26 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 			try {resourcesManager.write(GLOBAL_NUMBER_GAMES_PLAYED_KEY, "0");} 
 			catch (IOException e1) {e1.printStackTrace();}
 		}
+	}
+	private void InitializedBonus() 
+	{
+		//GLOBAL
+		try {resourcesManager.read(ONE_LIFE_GLOBAL_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(ONE_LIFE_GLOBAL_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(TWO_LIVES_GLOBAL_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(TWO_LIVES_GLOBAL_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		//FIVE
+		try {resourcesManager.read(ONE_LIFE_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(ONE_LIFE_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(TWO_LIVES_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(TWO_LIVES_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		//ONE
+		try {resourcesManager.read(ONE_LIFE_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(ONE_LIFE_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(TWO_LIVES_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(TWO_LIVES_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 	}
 	private void CheckBestStats() throws NumberFormatException, IOException
 	{

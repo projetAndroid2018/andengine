@@ -46,8 +46,7 @@ public abstract class Player extends AnimatedSprite
 		super(pX, pY, ResourcesManager.getInstance().player_region, vbo);
 		createPhysics(camera, physicsWorld);
 		camera.setChaseEntity(this);
-		life = 10;
-		collides = false;
+		life = 3;
 		speedX = 6;
 		heightJump = 8;
 		hasjumped = false;
@@ -56,7 +55,7 @@ public abstract class Player extends AnimatedSprite
 	// ---------------------------------------------
 	// CLASS LOGIC
 	// ---------------------------------------------
-	
+
 	private void createPhysics(final Camera camera, PhysicsWorld physicsWorld)
 	{		
 		body = PhysicsFactory.createBoxBody(physicsWorld, this, BodyType.DynamicBody, PhysicsFactory.createFixtureDef(0, 0, 0));
@@ -128,6 +127,14 @@ public abstract class Player extends AnimatedSprite
 	public void decreaseFootContacts()
 	{	
 		footContacts--;
+	}
+	public void increaseLife()
+	{
+		if(life < 3 && life > 0)
+			life++;
+		else
+			return;
+			
 	}
 	
 	public abstract void onDie();

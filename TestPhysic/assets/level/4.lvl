@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <level width="140000" height="780">	
 	<entity x="100" y="100" type="platform1" width ="125" height = "34" move="0"/>
-	<entity x="260" y="140" type="platform1" width ="125" height = "34" move="0"/>
-	<entity x="420" y="180" type="platform1" width ="125" height = "34" move="0"/>
-	<entity x="580" y="220" type="platform1" width ="125" height = "34" move="0"/>
-	<entity x="740" y="200" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="260" y="100" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="420" y="100" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="580" y="100" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="740" y="100" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="740" y="180" type="heart" width ="50" height = "50" move="0"/>
+	<entity x="420" y="150" type="trap" width ="100" height = "40" move="0"/>
 </level>
