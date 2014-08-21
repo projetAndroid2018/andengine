@@ -136,6 +136,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private int perturbationsVerticalTime = 300;
 	private int perturbationsHorizontalTime = 300;
 	private int perturbationsDiagonaTime = 300;
+	private int scoreMultiplier;
+	private int coinsMultiplier;
+	public static boolean oneShot = false;
 	
 	
 	//-------------------------------------------
@@ -220,18 +223,45 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//Score
 	public final static String GLOBAL_SCORE_KEY = "GSK";
 	
-	//-----------------------------------------
+	//--------------------------------------------------------------------
 	//BONUS
-	//------------------------------------------
+	//--------------------------------------------------------------------
 	
+	//Life
+	
+	//Global
 	public final static String ONE_LIFE_GLOBAL_KEY = "OLGK";
 	public final static String TWO_LIVES_GLOBAL_KEY = "TLGK";
-	
+	//Five game
 	public final static String ONE_LIFE_FIVE_GAME_KEY = "OLFGK";
 	public final static String TWO_LIVES_FIVE_GAME_KEY = "TLVGK";
-	
+	//One game
 	public final static String ONE_LIFE_ONE_GAME_KEY = "OLOGK";
 	public final static String TWO_LIVES_ONE_GAME_KEY= "TLOGK";
+	
+	//Multiplication coins
+	
+	//One game
+	public final static String MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY = "MT2COGK";
+	public final static String MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY = "MT5COGK";
+	//Five game
+	public final static String MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY = "MT2CFGK";
+	public final static String MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY = "MT5CFGK";
+	
+	//Multiplication score
+	
+	//One game
+	public final static String MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY = "MT2SOGK";
+	public final static String MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY = "MT5SOGK";
+	//Five game
+	public final static String MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY = "MT2SFGK";
+	public final static String MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY = "MT5SFGK";
+	
+	//Player's fire power
+	public final static String FIRE_POWER_ONE_GAME = "FPOG";
+	public final static String FIRE_POWER_FIVE_GAME = "FPFG";
+	
+	
 	
 		
 
@@ -253,7 +283,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		loadLevel(levelToLoad);
 		createGameOverText();
 		levelCompleteWindow = new LevelCompleteWindow(vbom);
-		setOnSceneTouchListener(this); 
+		setOnSceneTouchListener(this);
+		oneShot = checkFirePower();
 	}
 
 
@@ -371,10 +402,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 
 							if (player.collidesWith(this))
 							{
-								addToScore(10);
 								this.setVisible(false);
 								this.setIgnoreUpdate(true);
-								numberCoinsCollected++;
+								numberCoinsCollected += coinsMultiplier;
 							}
 						}
 					};
@@ -413,10 +443,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 							@Override
 							public void level() 
 							{
-								addToScore(0);
+								addToScore(scoreMultiplier);
 								if(this.getX() > ((levelToLoad-1)*800))
 								{
-									
 									levelToLoad++;
 									if(levelToLoad % 2 == 0 && player.speedX < 15)
 										player.speedX += 0.5f;
@@ -483,6 +512,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 						};
 						initialPosition = x;
 						checkNumberLifeCharacter();
+						scoreMultiplier = checkMultiplier();
+						coinsMultiplier = checkCoinsMultiplier();
 						levelObject = player;
 				}
 				else if (type.equals(TAG_ENTITY_ATTRIBUTE_TYPE_VALUE_ENEMY1))
@@ -728,6 +759,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 							{
 								setVisible(false);
 								player.increaseLife();
+								setIgnoreUpdate(true);
 							}
 						};
 					};
@@ -1059,10 +1091,153 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	    setBackground(background);
 	}
 	
-	private void addToScore(int i)
+	private void addToScore(int multiplier)
 	{		
-		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10) + (scorePlus * 50) + (scoreMoins * (-25) ));
+		score = (int)((numberCoinsCollected * 2) + (numberTrapsDestroyed * 2) + (numberEnemiesDestroyed * 2) + (numberMeters / 10) + (scorePlus * 50) + (scoreMoins * (-25) )) * multiplier;
 		scoreText.setText("Score: " + score);
+	}
+	
+	private int checkMultiplier()
+	{
+		int twoMultiplierOneGame;
+		int fiveMultiplierOneGame;
+		int twoMultiplierFiveGame;
+		int fiveMultiplierFiveGame;
+		
+		try 
+		{
+			twoMultiplierOneGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY));
+			fiveMultiplierOneGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY));
+			twoMultiplierFiveGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY));
+			fiveMultiplierFiveGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY));
+			
+			if(fiveMultiplierFiveGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 5;
+			}
+			else if(fiveMultiplierOneGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 5;
+			}
+			else if(twoMultiplierFiveGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 2;
+			}
+			else if(twoMultiplierOneGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 2;
+			}
+			else
+				return 1;
+		} 
+		catch (IOException e) 
+		{
+			return 1;
+		}
+		
+	}
+	
+	private int checkCoinsMultiplier()
+	{
+		int twoMultiplierOneGame;
+		int fiveMultiplierOneGame;
+		int twoMultiplierFiveGame;
+		int fiveMultiplierFiveGame;
+		
+		try 
+		{
+			twoMultiplierOneGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY));
+			fiveMultiplierOneGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY));
+			twoMultiplierFiveGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY));
+			fiveMultiplierFiveGame = Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY));
+			
+			if(fiveMultiplierFiveGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 5;
+			}
+			else if(fiveMultiplierOneGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 5;
+			}
+			else if(twoMultiplierFiveGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 2;
+			}
+			else if(twoMultiplierOneGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY))) - 1;
+				resourcesManager.write(MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY, Integer.toString(numberTime));
+				
+				return 2;
+			}
+			else
+				return 1;
+			
+		} 
+		catch (IOException e) 
+		{
+			return 1;
+		}
+		
+		
+	}
+	
+	private boolean checkFirePower()
+	{
+		int oneGame;
+		int fiveGame;
+		
+		try 
+		{
+			oneGame = Integer.parseInt(resourcesManager.read(FIRE_POWER_ONE_GAME));
+			fiveGame = Integer.parseInt(resourcesManager.read(FIRE_POWER_FIVE_GAME));
+			
+			if(fiveGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(FIRE_POWER_FIVE_GAME))) - 1;
+				resourcesManager.write(FIRE_POWER_FIVE_GAME, Integer.toString(numberTime));
+				
+				return true;
+			}
+			else if(oneGame > 0)
+			{
+				int numberTime = (Integer.parseInt(resourcesManager.read(FIRE_POWER_ONE_GAME))) - 1;
+				resourcesManager.write(FIRE_POWER_ONE_GAME, Integer.toString(numberTime));
+				
+				return true;
+			}
+			else
+				return false;
+		}
+		catch (NumberFormatException e) 
+		{
+			return false;
+		} 
+		catch (IOException e) 
+		{
+			return false;
+		}		
 	}
 	
 	private void createPhysics()
@@ -1453,23 +1628,63 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	}
 	private void InitializedBonus() 
 	{
+		//LIFE
+		
 		//GLOBAL
 		try {resourcesManager.read(ONE_LIFE_GLOBAL_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(ONE_LIFE_GLOBAL_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 		try {resourcesManager.read(TWO_LIVES_GLOBAL_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(TWO_LIVES_GLOBAL_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 		
-		//FIVE
+		//FIVE GAME
 		try {resourcesManager.read(ONE_LIFE_FIVE_GAME_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(ONE_LIFE_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 		try {resourcesManager.read(TWO_LIVES_FIVE_GAME_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(TWO_LIVES_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 		
-		//ONE
+		//ONE GAME
 		try {resourcesManager.read(ONE_LIFE_ONE_GAME_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(ONE_LIFE_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
 		try {resourcesManager.read(TWO_LIVES_ONE_GAME_KEY);} catch (IOException e) {try 
 		{resourcesManager.write(TWO_LIVES_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		
+		//COINS
+		
+		//FIVE GAME
+		try {resourcesManager.read(MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_2_COINS_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_5_COINS_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		//ONE GAME
+		try {resourcesManager.read(MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_2_COINS_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_5_COINS_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		
+		//SCORE
+		
+		//FIVE GAME
+		try {resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_2_SCORE_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_5_SCORE_FIVE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		//ONE GAME
+		try {resourcesManager.read(MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_2_SCORE_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY);} catch (IOException e) {try 
+		{resourcesManager.write(MULTIPLICATION_TIME_5_SCORE_ONE_GAME_KEY, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		
+		//PLAYER'S POWER FIRE
+		
+		//ONE GAME
+		try {resourcesManager.read(FIRE_POWER_ONE_GAME);} catch (IOException e) {try 
+		{resourcesManager.write(FIRE_POWER_ONE_GAME, "0");} catch (IOException e1) {e1.printStackTrace();}}
+		try {resourcesManager.read(FIRE_POWER_FIVE_GAME);} catch (IOException e) {try 
+		{resourcesManager.write(FIRE_POWER_FIVE_GAME, "0");} catch (IOException e1) {e1.printStackTrace();}}
 	}
 	private void CheckBestStats() throws NumberFormatException, IOException
 	{

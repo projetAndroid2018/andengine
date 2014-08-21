@@ -59,8 +59,6 @@ public class Boutique extends BaseScene implements IOnMenuItemClickListener
 			default:
 				return false;
 		}
-		
-		
 	}
 
 	@Override
@@ -70,8 +68,7 @@ public class Boutique extends BaseScene implements IOnMenuItemClickListener
 		createMenuChildScene();
 		
 		attachChild(new Text(250, engine.getCamera().getCenterY() + 200,  resourcesManager.font, "COIN : ???", vbom));
-		
-		
+
 	}
 
 	private void createBackground()

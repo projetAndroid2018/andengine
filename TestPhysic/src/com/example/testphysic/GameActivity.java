@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.google.android.gms.ads.*;
+import com.google.android.gms.games.Game;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
@@ -117,8 +118,6 @@ public class GameActivity extends BaseGameActivity
         // SHOW AD //
         adView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         this.setContentView(frameLayout, frameLayoutLayoutParams);
-
-
 	  }
 
 	@Override
@@ -145,7 +144,7 @@ public class GameActivity extends BaseGameActivity
     }
 	
 	public EngineOptions onCreateEngineOptions()
-	{
+	{		
 		camera = new BoundCamera(0, 0,800, 480);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), this.camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);
