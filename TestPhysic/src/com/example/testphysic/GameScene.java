@@ -12,8 +12,13 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
+import org.andengine.entity.scene.menu.MenuScene;
+import org.andengine.entity.scene.menu.item.IMenuItem;
+import org.andengine.entity.scene.menu.item.SpriteMenuItem;
+import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
@@ -24,6 +29,7 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
+import org.andengine.util.adt.color.Color;
 import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
@@ -106,8 +112,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private TiledSprite heart2;
 	private TiledSprite heart3;
 	private TiledSprite heart4;
-	private TiledSprite heart5
-	;
+	private TiledSprite heart5;
+	private Sprite pause;
+	private Sprite play;
+	private Rectangle pauseRe;
+	private Rectangle playRe;
 	private AnimatedSprite area;
 	private static long[] animateArea = {100 , 0};
 	private static long[] animateArea2 = {0 ,100};
@@ -960,17 +969,32 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	toLeftArrow = new Sprite (500 , 100, 200, 81, resourcesManager.toLeftArrow, vbom);
 	toRightArrow = new Sprite (200 , 100, 200, 81, resourcesManager.toRightArrow, vbom);
 	
-	    scoreText.setText("Score: 0");
-		gameHUD.registerTouchArea(rectangle);
-		gameHUD.attachChild(scoreText);
+	scoreText.setText("Score: 0");
+	gameHUD.registerTouchArea(rectangle);
+	gameHUD.attachChild(scoreText);
 
-		animate = animateArea;
-		area.animate(animate,true);
-		gameHUD.attachChild(area);
+	animate = animateArea;
+	area.animate(animate,true);
+	gameHUD.attachChild(area);
 		
-		camera.setHUD(gameHUD);
-	}
+	//PAUSE BUTTON
+	pause = new Sprite(710, 410, 50, 50, resourcesManager.pauseRegion, vbom);
+	pauseRe = new Rectangle(710, 410, 50, 50, vbom)
+	{
+		@Override
+		public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
+		{
+			if(pSceneTouchEvent.isActionDown())
+				pauseMenu();
+			return true;
+		};
+	};
+	gameHUD.attachChild(pause);
+	gameHUD.registerTouchArea(pauseRe);
 	
+	camera.setHUD(gameHUD);
+	}
+
 	private void displayEquilibrium()
 	{
 		gameHUD.attachChild(arrow);
@@ -1752,5 +1776,34 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		resourcesManager.write(GLOBAL_SCORE_KEY, Integer.toString(getScore + score));
 	}
 
+	private void pauseMenu()
+	{
+		MenuScene pauseScreen = new MenuScene(camera);
+
+		play = new Sprite(360, 240, 50, 50, resourcesManager.playRegion, vbom);
+		playRe = new Rectangle(360, 240, 50, 50, vbom)
+		{
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
+			{
+				if(pSceneTouchEvent.isActionDown())
+					resumeGame();
+				return true;
+			};
+		};
+		final Sprite fond = new Sprite(780 / 2, 480 / 2, resourcesManager.fondRegion, vbom);
+		
+		pauseScreen.registerTouchArea(playRe);
+		pauseScreen.attachChild(fond);
+		pauseScreen.attachChild(play);
+				
+		pauseScreen.setBackgroundEnabled(false);
+		setChildScene(pauseScreen, false, true, true); 
+	}
+
+	private void resumeGame() 
+	{
+		clearChildScene();
+	}
 	
 }

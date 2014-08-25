@@ -105,6 +105,10 @@ public class ResourcesManager
 	public BuildableBitmapTextureAtlas arrowTextureAtlas;
 	public ITextureRegion toLeftArrow;
 	public ITextureRegion toRightArrow;
+	public BuildableBitmapTextureAtlas HUDPauseAtlas;
+	public ITextureRegion pauseRegion;
+	public ITextureRegion playRegion;
+	public ITextureRegion fondRegion;
 	
 	//SPLASH
 	private BitmapTextureAtlas splashTextureAtlas;
@@ -476,7 +480,7 @@ public class ResourcesManager
         complete_window_region = BitmapTextureAtlasTextureRegionFactory.createFromAsset(gameTextureAtlas, activity, "end_level.png");
         complete_stars_region = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(gameTextureAtlas, activity, "stars.png", 2, 1);
         
-        backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
+        backgroundTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 4096, 4096, TextureOptions.BILINEAR);
         backgroud = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "background.jpg");
         
         
@@ -531,12 +535,19 @@ public class ResourcesManager
 		toLeftArrow = BitmapTextureAtlasTextureRegionFactory.createFromAsset(arrowTextureAtlas, activity, "ToLeft.png");
 		toRightArrow = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDTextureAtlas, activity, "toRight.png");
 	
+		HUDPauseAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		pauseRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "pause1.png");
+		playRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "pause1.png");
+		fondRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "fondPause.png");
+		
 		try
 		{
 			HUDTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			HUDTextureAtlas.load();
 			arrowTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			arrowTextureAtlas.load();
+			HUDPauseAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			HUDPauseAtlas.load();
 		}
 		catch(final TextureAtlasBuilderException e)
 		{
