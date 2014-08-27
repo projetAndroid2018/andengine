@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.google.android.gms.ads.*;
-import com.google.android.gms.games.Game;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.LimitedFPSEngine;
@@ -42,25 +41,7 @@ public class GameActivity extends BaseGameActivity
 	@Override 
 	protected void onSetContentView() 
 	{
-		
-        // Prepare the Interstitial Ad
-        interstitial = new InterstitialAd(this);
-        // Insert the Ad Unit ID
-        interstitial.setAdUnitId(MY_AD_UNIT_ID_INTERT);
- 
 
- 
-        // Request for Ads
-        AdRequest adRequest1 = new AdRequest.Builder()
- 
-        // Add a test device to show Test Ads
-        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-	    .addTestDevice(myHash)
-	    .addTestDevice(myHash2)
-	    .build();
-
-        // Load ads into Interstitial Ads
-        interstitial.loadAd(adRequest1);
 		
 		//---------------------------------------------------------
 		// FIRST AD (BOTTOM)
@@ -119,8 +100,44 @@ public class GameActivity extends BaseGameActivity
         adView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
         this.setContentView(frameLayout, frameLayoutLayoutParams);
 	  }
+	
+	public void prepareIntersticialAd()
+	{
+        interstitial = new InterstitialAd(this);
+    	this.runOnUiThread(new Runnable() 
+        {
+                @Override
+                public void run() 
+                {
+                    // Prepare the Interstitial Ad
 
-	@Override
+                    // Insert the Ad Unit ID
+                    interstitial.setAdUnitId(MY_AD_UNIT_ID_INTERT);
+             
+
+             
+                    // Request for Ads
+                    AdRequest adRequest1 = new AdRequest.Builder()
+             
+                    // Add a test device to show Test Ads
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            	    .addTestDevice(myHash)
+            	    .addTestDevice(myHash2)
+            	    .build();
+
+                    // Load ads into Interstitial Ads
+                    interstitial.loadAd(adRequest1);
+                }
+        });
+        
+        
+        
+        
+        
+        
+	}
+	
+	@Override	
 	public Engine onCreateEngine(EngineOptions pEngineOptions) 
 	{
 		return new LimitedFPSEngine(pEngineOptions, 60);
@@ -128,7 +145,6 @@ public class GameActivity extends BaseGameActivity
    
     public void displayInterstitial() 
     {
-    	
     	this.runOnUiThread(new Runnable() 
         {
                 @Override

@@ -109,6 +109,7 @@ public class ResourcesManager
 	public ITextureRegion pauseRegion;
 	public ITextureRegion playRegion;
 	public ITextureRegion fondRegion;
+	public ITiledTextureRegion soundRegion;
 	
 	//SPLASH
 	private BitmapTextureAtlas splashTextureAtlas;
@@ -537,8 +538,12 @@ public class ResourcesManager
 	
 		HUDPauseAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		pauseRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "pause1.png");
-		playRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "pause1.png");
-		fondRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "fondPause.png");
+		playRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "resume.png");
+		soundRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(HUDPauseAtlas, activity, "HPS.png", 2, 1);
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/menu/");	
+		fondRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(HUDPauseAtlas, activity, "menu_screen_hight.png");
+
+		
 		
 		try
 		{

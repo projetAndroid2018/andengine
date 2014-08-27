@@ -12,13 +12,9 @@ import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
 import org.andengine.entity.scene.background.ParallaxBackground;
 import org.andengine.entity.scene.background.ParallaxBackground.ParallaxEntity;
 import org.andengine.entity.scene.menu.MenuScene;
-import org.andengine.entity.scene.menu.item.IMenuItem;
-import org.andengine.entity.scene.menu.item.SpriteMenuItem;
-import org.andengine.entity.scene.menu.item.decorator.ScaleMenuItemDecorator;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
@@ -29,7 +25,6 @@ import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.util.SAXUtils;
 import org.andengine.util.adt.align.HorizontalAlign;
-import org.andengine.util.adt.color.Color;
 import org.andengine.util.level.EntityLoader;
 import org.andengine.util.level.constants.LevelConstants;
 import org.andengine.util.level.simple.SimpleLevelEntityLoaderData;
@@ -279,6 +274,7 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	public void createScene()
 	{
 		resourcesManager.hideAd();
+		resourcesManager.activity.prepareIntersticialAd();
 		InitializeGameStats();
 		InitializeBestStats();
 		InitializedGlobal();
@@ -430,7 +426,16 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 								{
 									displayGameOverText();
 									resourcesManager.activity.setAdMobVisibile();
-									resourcesManager.activity.displayInterstitial();
+									int numberGameSceneLoaded = 0;
+									
+									try 
+									{
+										numberGameSceneLoaded = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_GAMES_PLAYED_KEY));
+									} 
+									catch (NumberFormatException e1) {} catch (IOException e1) {e1.printStackTrace();}
+									
+									if(numberGameSceneLoaded % 4 == 0)
+										resourcesManager.activity.displayInterstitial();
 
 									player.setVisible(false);
 									try { CheckBestStats(); } catch (NumberFormatException e) {} catch (IOException e) {}
@@ -1779,9 +1784,11 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	private void pauseMenu()
 	{
 		MenuScene pauseScreen = new MenuScene(camera);
-
-		play = new Sprite(360, 240, 50, 50, resourcesManager.playRegion, vbom);
-		playRe = new Rectangle(360, 240, 50, 50, vbom)
+		
+		
+		//RESUME BUTTON
+		play = new Sprite(360, 170, 720 / 2 - 30, 80, resourcesManager.playRegion, vbom);
+		playRe = new Rectangle(360, 170, 720 / 2 - 30, 80, vbom)
 		{
 			@Override
 			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
@@ -1791,19 +1798,51 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 				return true;
 			};
 		};
-		final Sprite fond = new Sprite(780 / 2, 480 / 2, resourcesManager.fondRegion, vbom);
+		
+		//SOUND BUTTON
+		final AnimatedSprite sound = new AnimatedSprite(360, 300, 50, 50, resourcesManager.soundRegion, vbom);
+		final Rectangle soundRectangle = new Rectangle(360, 300, 50, 50, vbom)
+		{
+			@Override
+			public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) 
+			{
+				if(pSceneTouchEvent.isActionDown())
+				{
+					if(sound.getCurrentTileIndex() == 0)
+						sound.setCurrentTileIndex(1);
+					else
+						sound.setCurrentTileIndex(0);
+					//HADRIEN FAIS TES MODIFS ICI !!
+					
+				}
+
+				
+				return true;
+			}
+		};
+		
+		
+		final Sprite fond = new Sprite(780 / 2, 480 / 2, 780 / 2, 480 / 2, resourcesManager.fondRegion, vbom);
+
+		
+		pauseScreen.attachChild(fond);
 		
 		pauseScreen.registerTouchArea(playRe);
-		pauseScreen.attachChild(fond);
 		pauseScreen.attachChild(play);
+		
+		pauseScreen.registerTouchArea(soundRectangle);
+		pauseScreen.attachChild(sound);
+		
 				
 		pauseScreen.setBackgroundEnabled(false);
 		setChildScene(pauseScreen, false, true, true); 
+		resourcesManager.displayAd();
 	}
 
 	private void resumeGame() 
 	{
 		clearChildScene();
+		resourcesManager.hideAd();
 	}
 	
 }
