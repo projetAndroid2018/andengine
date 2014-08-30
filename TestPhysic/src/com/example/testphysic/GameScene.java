@@ -227,6 +227,14 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//Score
 	public final static String GLOBAL_SCORE_KEY = "GSK";
 	
+	//--------------------------------------------
+	//TOTAL
+	//--------------------------------------------
+	public final static String TOTAL_COINS_POSSESSED_KEY = "TCPK";
+	
+	
+	
+	
 	//--------------------------------------------------------------------
 	//BONUS
 	//--------------------------------------------------------------------
@@ -1584,6 +1592,15 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	{
 		try 
 		{
+			resourcesManager.read(TOTAL_COINS_POSSESSED_KEY);
+		} 
+		catch (IOException e) 
+		{
+			try {resourcesManager.write(TOTAL_COINS_POSSESSED_KEY, "0");} 
+			catch (IOException e1) {e1.printStackTrace();}
+		}
+		try 
+		{
 			resourcesManager.read(GLOBAL_NUMBER_COINS_COLLECTED_KEY);
 		} 
 		catch (IOException e) 
@@ -1758,6 +1775,9 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		//COINS
 		final int getCoins = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_COINS_COLLECTED_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_COINS_COLLECTED_KEY, Integer.toString(getCoins + numberCoinsCollected));
+		//TOTAL COINS
+		final int getTotalCoins = Integer.parseInt(resourcesManager.read(TOTAL_COINS_POSSESSED_KEY));
+		resourcesManager.write(TOTAL_COINS_POSSESSED_KEY, Integer.toString(getTotalCoins + numberCoinsCollected));
 		//ENEMIES DESTROYED
 		final int getEnemiesDestroyed = Integer.parseInt(resourcesManager.read(GLOBAL_NUMBER_ENEMIES_DESTROYED_KEY));
 		resourcesManager.write(GLOBAL_NUMBER_ENEMIES_DESTROYED_KEY, Integer.toString(getEnemiesDestroyed + numberEnemiesDestroyed));
@@ -1838,7 +1858,6 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		setChildScene(pauseScreen, false, true, true); 
 		resourcesManager.displayAd();
 	}
-
 	private void resumeGame() 
 	{
 		clearChildScene();

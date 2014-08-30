@@ -131,11 +131,29 @@ public class ResourcesManager
 	public TextureRegion background_stat;
 	
 	//boutique
-	private BuildableBitmapTextureAtlas boutiqueTextureAtlas;
+	public BuildableBitmapTextureAtlas boutiqueTextureAtlas;
 	public ITextureRegion retour_region_boutique;
 	public ITextureRegion validez_region_boutique;
 	public ITextureRegion region_coin;
 	public TextureRegion background_boutique;
+	public ITextureRegion pictureBackgroundRegion;
+	public ITextureRegion synopsisBackgroundRegion;
+	public ITextureRegion picture1;
+	
+	public BuildableBitmapTextureAtlas boutiqueBonusAtlas;
+	public ITextureRegion S5G1;
+	public ITextureRegion S5G5;
+	public ITextureRegion S2G5;
+	public ITextureRegion S2G1;
+	
+	public ITextureRegion C5G1;
+	public ITextureRegion C5G5;
+	public ITextureRegion C2G5;
+	public ITextureRegion C2G1;
+	
+	public ITextureRegion oneShot5G;
+	public ITextureRegion oneShot1G;
+	
 	
 	//hightscore
 	private BuildableBitmapTextureAtlas hightTextureAtlas;
@@ -232,7 +250,7 @@ public class ResourcesManager
 	private void loadGlobalFonts()
 	{
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 30, true, Color.WHITE, 2, Color.WHITE);
 		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font2.otf", 30, true, Color.WHITE, 2, Color.WHITE);
@@ -265,7 +283,7 @@ public class ResourcesManager
 	private void loadHightFonts()
 	{
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 30, true, Color.WHITE, 2, Color.WHITE);
 		font2 = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font2.otf", 30, true, Color.WHITE, 2, Color.WHITE);
@@ -280,8 +298,6 @@ public class ResourcesManager
 	}
 	private void loadBoutiqueGraphics()
 	{
-		
-		
 		boutiqueTextureAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 2048, 512, TextureOptions.BILINEAR);
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/game/");
 		region_coin = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "coin.png");
@@ -289,11 +305,31 @@ public class ResourcesManager
         retour_region_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "retour.png");
         validez_region_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "boutonvalidez.png");
         background_boutique = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "menu_screen.png");
+        pictureBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "fondPicture.png");
+        synopsisBackgroundRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "fondPicture.png");
+        picture1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueTextureAtlas, activity, "picture1.png");
+       
+        boutiqueBonusAtlas = new BuildableBitmapTextureAtlas(activity.getTextureManager(), 1024, 256, TextureOptions.BILINEAR);
+        
+        C2G1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "coinsx2g1.png");
+        C2G5 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "coinsx2g5.png");
+        C5G1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "coinsx5g1.png");
+        C5G5 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "coinsx5g5.png");
+        
+        S2G1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "scorex2g1.png");
+        S2G5 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "scorex2g5.png");
+        S5G1 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "scorex5g1.png");
+        S5G5 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "scorex5g5.png");
+        
+        oneShot1G = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "target.png");
+        oneShot5G = BitmapTextureAtlasTextureRegionFactory.createFromAsset(boutiqueBonusAtlas, activity, "target.png");
         
         try 
     	{
 			this.boutiqueTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
 			this.boutiqueTextureAtlas.load();
+			boutiqueBonusAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 0));
+			boutiqueBonusAtlas.load();
 		} 
     	catch (final TextureAtlasBuilderException e)
     	{
@@ -303,9 +339,9 @@ public class ResourcesManager
 	private void loadBoutiqueFonts()
 	{
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
-		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 50, true, Color.WHITE, 2, Color.BLACK);
+		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 30, true, Color.WHITE, 2, Color.WHITE);
 		font.load();
 
 	}
@@ -317,7 +353,7 @@ public class ResourcesManager
 	private void loadStatFonts()
 	{
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "ARIAL.TTF", 50, true, Color.WHITE, 2, Color.BLACK);
 		font.load();
@@ -453,7 +489,7 @@ public class ResourcesManager
 	private void loadMenuFonts()
 	{
 		FontFactory.setAssetBasePath("font/");
-		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+		final ITexture mainFontTexture = new BitmapTextureAtlas(activity.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
 		font = FontFactory.createStrokeFromAsset(activity.getFontManager(), mainFontTexture, activity.getAssets(), "font.ttf", 50, true, Color.WHITE, 2, Color.BLACK);
 		font.load();

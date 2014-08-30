@@ -5,4 +5,6 @@
 	<entity x="420" y="100" type="platform1" width ="125" height = "34" move="0"/>
 	<entity x="580" y="100" type="platform1" width ="125" height = "34" move="0"/>
 	<entity x="740" y="100" type="platform1" width ="125" height = "34" move="0"/>
+	<entity x="580" y="160" type="coin" width ="30" height = "30" move="0"/>
+	<entity x="260" y="160" type="coin" width ="30" height = "30" move="0"/>
 </level>

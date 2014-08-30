@@ -14,10 +14,7 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.Text;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.util.GLState;
-
-import android.graphics.Color;
 import android.view.MotionEvent;
-import android.widget.Scroller;
 
 import com.example.testphysic.SceneManager.SceneType;
 
@@ -25,7 +22,7 @@ public class Highscore extends BaseScene implements IOnMenuItemClickListener, IO
 {
 	
 	//Scrolling
-	private float mTouchX = 0, mTouchY = 0, mTouchOffsetX = 0, mTouchOffsetY = 0;
+	private float mTouchY = 0, mTouchOffsetY = 0;
 	
 	//Best stats
 		private String bestNumberEnemyKilled;

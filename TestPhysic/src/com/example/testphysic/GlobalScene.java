@@ -95,7 +95,7 @@ public class GlobalScene extends BaseScene implements IOnMenuItemClickListener, 
 	
 	private void createBackground()
 	{
-		attachChild(new Sprite(400, 100, engine.getCamera().getWidth(), engine.getCamera().getHeight()*3, 
+		attachChild(new Sprite(400, 100, engine.getCamera().getWidth(), engine.getCamera().getHeight() * 3, 
 				resourcesManager.background_global, vbom)
 		{
     		@Override
@@ -113,7 +113,8 @@ public class GlobalScene extends BaseScene implements IOnMenuItemClickListener, 
 		menuChildScene.setPosition(0, 0);
 		
 		
-		final IMenuItem retourMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_RETOUR, resourcesManager.retour_region_global, vbom), 1.2f, 1);
+		final IMenuItem retourMenuItem = new ScaleMenuItemDecorator(new SpriteMenuItem(MENU_RETOUR, 
+				resourcesManager.retour_region_global, vbom), 1.2f, 1);
 		
 		menuChildScene.addMenuItem(retourMenuItem);
 
