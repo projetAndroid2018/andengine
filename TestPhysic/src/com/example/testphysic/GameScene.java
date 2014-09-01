@@ -893,7 +893,10 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 		attachChild(gameOverText);
 		player.canRun = false;
 		player.body.setLinearVelocity(new Vector2(0,0));
-
+		if (GameActivity.sound)
+    	{
+    		ResourcesManager.getInstance().music_game.pause();
+    	}
 		gameOverDisplayed = true;
 	}
 	

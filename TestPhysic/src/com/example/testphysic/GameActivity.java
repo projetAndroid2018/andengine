@@ -36,7 +36,7 @@ public class GameActivity extends BaseGameActivity
 	public static int timerAd = 3;
 
 	
-	
+	public static boolean sound = true;
 	
 	@Override 
 	protected void onSetContentView() 
@@ -218,10 +218,6 @@ public class GameActivity extends BaseGameActivity
 	public void onPause() 
 	{
 	    adView.pause();
-	    if(ResourcesManager.music_menu != null && ResourcesManager.music_menu.isPlaying())
-	    	ResourcesManager.music_menu.pause();
-	    if(ResourcesManager.music_game != null && ResourcesManager.music_game.isPlaying())
-	    	ResourcesManager.music_game.pause();
 	    super.onPause();
 	}
 
@@ -237,10 +233,6 @@ public class GameActivity extends BaseGameActivity
 	    
 	    //Rajoute le booleen dans le if pour chaque music
 	    
-	    //if(ResourcesManager.music_menu != null)
-	    //	ResourcesManager.music_menu.play();
-	    //if(ResourcesManager.music_game != null)
-	    //	ResourcesManager.music_game.play();
 	}
 
 	

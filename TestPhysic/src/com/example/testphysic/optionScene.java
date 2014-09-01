@@ -56,13 +56,14 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 		menuChildScene.setOnMenuItemClickListener(this);
 		
 		setChildScene(menuChildScene);
-		if (SceneManager.getInstance().Sound_on)
+		
+		if (GameActivity.sound)
 		{
-			SOUND_MenuItem.setCurrentTileIndex(1);
+			SOUND_MenuItem.setCurrentTileIndex(0);
 		}
 		else
 		{
-			SOUND_MenuItem.setCurrentTileIndex(0);
+			SOUND_MenuItem.setCurrentTileIndex(1);
 		}
 	}
 	
@@ -109,33 +110,19 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 				SceneManager.getInstance().createMenuScene();
 				return true;
 			case MENU_SON:
-				if (SceneManager.getInstance().Sound_on)
+				if (GameActivity.sound)
 				{
-					SceneManager.getInstance().Sound_on = false;
-					SOUND_MenuItem.setCurrentTileIndex(0);
-					try
-					{
-						ResourcesManager.music_menu.resume();
-						ResourcesManager.music_game.resume();	
-					}
-					catch (Exception e)
-					{
-						
-					}
+					SOUND_MenuItem.setCurrentTileIndex(1);
+					GameActivity.sound = false;
+					ResourcesManager.getInstance().music_game.pause();
+					ResourcesManager.getInstance().music_menu.pause();
 				}
 				else
 				{
-					SceneManager.getInstance().Sound_on = true;
-					SOUND_MenuItem.setCurrentTileIndex(1);
-					try
-					{
-						ResourcesManager.music_menu.pause();
-						ResourcesManager.music_game.pause();	
-					}
-					catch (Exception e)
-					{
-						
-					}
+					SOUND_MenuItem.setCurrentTileIndex(0);
+					GameActivity.sound = true;
+					ResourcesManager.getInstance().music_game.play();
+					ResourcesManager.getInstance().music_menu.play();
 				}
 				return true;
 			default:

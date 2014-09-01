@@ -172,14 +172,12 @@ public class ResourcesManager
 	public ITextureRegion retour_region_global;
 	public TextureRegion background_global;
 
-
-		
-	//SOUND
-	public static Music music_menu;
-	public static Music music_game;
+	
 
 	
-	
+	//Sound
+	public Music music_menu;
+	public Music music_game;
 	
 	
 	

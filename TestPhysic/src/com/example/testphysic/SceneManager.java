@@ -1,5 +1,6 @@
 package com.example.testphysic;
 
+import org.andengine.audio.music.Music;
 import org.andengine.engine.Engine;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -154,7 +155,7 @@ public class SceneManager
 		splashScene = new SplashScene();
 		currentScene = splashScene;
 		ResourcesManager.getInstance().loadMenuSoundResources();
-		ResourcesManager.music_menu.play();
+		ResourcesManager.getInstance().music_menu.play();
 		pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
 	}
 	
@@ -176,9 +177,11 @@ public class SceneManager
             	mEngine.unregisterUpdateHandler(pTimerHandler);
             	ResourcesManager.getInstance().loadGameResources();
             	
-            	if (ResourcesManager.music_menu.isPlaying())
-            	{ResourcesManager.music_menu.pause();}
-            	ResourcesManager.music_game.play();
+            	if (GameActivity.sound)
+            	{
+            		ResourcesManager.getInstance().music_menu.pause();
+            		ResourcesManager.getInstance().music_game.play();
+            	}
             	
         		gameScene = new GameScene();
         		setScene(gameScene);
@@ -197,6 +200,13 @@ public class SceneManager
             {
             	mEngine.unregisterUpdateHandler(pTimerHandler);
             	ResourcesManager.getInstance().loadMenuTextures();
+            	
+            	if (GameActivity.sound)
+            	{
+            		ResourcesManager.getInstance().music_menu.play();
+            		ResourcesManager.getInstance().music_game.pause();
+            	}
+            	
         		setScene(menuScene);
             }
 		}));

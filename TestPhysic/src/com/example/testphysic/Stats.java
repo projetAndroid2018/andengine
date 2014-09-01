@@ -46,6 +46,10 @@ public class Stats extends BaseScene implements IOnMenuItemClickListener
 		switch(pMenuItem.getID())
 		{
 			case MENU_RETOUR:
+				if (GameActivity.sound)
+		    	{
+		    		ResourcesManager.getInstance().music_menu.play();
+		    	}
 				SceneManager.getInstance().createMenuScene();
 				return true;
 			default:
@@ -140,6 +144,10 @@ public class Stats extends BaseScene implements IOnMenuItemClickListener
 	@Override
 	public void onBackKeyPressed() 
 	{
+		if (GameActivity.sound)
+    	{
+    		ResourcesManager.getInstance().music_menu.play();
+    	}
 		SceneManager.getInstance().createMenuScene();
 	}
 
