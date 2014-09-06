@@ -1,5 +1,7 @@
 package com.example.testphysic;
 
+import java.io.IOException;
+
 import org.andengine.audio.music.Music;
 import org.andengine.engine.Engine;
 import org.andengine.engine.handler.timer.ITimerCallback;
@@ -11,9 +13,7 @@ public class SceneManager
 {
 	//---------------------------------------------
 	// SCENES
-	//---------------------------------------------
-	
-	public boolean Sound_on;
+	//--------------------------------------------
 	
 	private BaseScene splashScene;
 	private BaseScene menuScene;
@@ -155,7 +155,10 @@ public class SceneManager
 		splashScene = new SplashScene();
 		currentScene = splashScene;
 		ResourcesManager.getInstance().loadMenuSoundResources();
-		ResourcesManager.getInstance().music_menu.play();
+		if (GameActivity.sound)
+		{
+			ResourcesManager.getInstance().music_menu.play();
+		}
 		pOnCreateSceneCallback.onCreateSceneFinished(splashScene);
 	}
 	

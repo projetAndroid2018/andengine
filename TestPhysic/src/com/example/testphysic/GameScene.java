@@ -175,6 +175,8 @@ public class GameScene extends BaseScene implements IOnSceneTouchListener
 	//Score
 	public static int score;
 	
+	//SON
+	public final static String GLOBAL_SON = "GS";
 	
 	//-------------------------------------------------------------
 	//Best

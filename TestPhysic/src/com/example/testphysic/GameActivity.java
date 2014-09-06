@@ -36,7 +36,7 @@ public class GameActivity extends BaseGameActivity
 	public static int timerAd = 3;
 
 	
-	public static boolean sound = true;
+	public static boolean sound;
 	
 	@Override 
 	protected void onSetContentView() 
@@ -161,6 +161,33 @@ public class GameActivity extends BaseGameActivity
 	
 	public EngineOptions onCreateEngineOptions()
 	{		
+		//definition valeur
+		try
+		{
+			readStats(GameScene.GLOBAL_SON);
+		} 
+		catch (IOException e)
+		{
+			try 
+			{
+				writeStats(GameScene.GLOBAL_SON, "true");
+				sound = true;
+			} 
+			catch (IOException e1) 
+			{
+				sound = true;
+			}
+		}
+		//affectation valeur
+		try 
+		{
+			sound = Boolean.getBoolean(readStats(GameScene.GLOBAL_SON));
+		}
+		catch (IOException e) 
+		{
+			sound=true;
+		}
+		
 		camera = new BoundCamera(0, 0,800, 480);
 		EngineOptions engineOptions = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR, new FillResolutionPolicy(), this.camera);
 		engineOptions.getAudioOptions().setNeedsMusic(true).setNeedsSound(true);

@@ -1,5 +1,7 @@
 package com.example.testphysic;
 
+import java.io.IOException;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.scene.menu.MenuScene;
 import org.andengine.entity.scene.menu.MenuScene.IOnMenuItemClickListener;
@@ -112,17 +114,33 @@ public class optionScene extends BaseScene implements IOnMenuItemClickListener
 			case MENU_SON:
 				if (GameActivity.sound)
 				{
-					SOUND_MenuItem.setCurrentTileIndex(1);
-					GameActivity.sound = false;
-					ResourcesManager.getInstance().music_game.pause();
-					ResourcesManager.getInstance().music_menu.pause();
+					try 
+					{
+						resourcesManager.write(GameScene.GLOBAL_SON, "false");
+						SOUND_MenuItem.setCurrentTileIndex(1);
+						GameActivity.sound = false;
+						ResourcesManager.getInstance().music_game.pause();
+						ResourcesManager.getInstance().music_menu.pause();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
 				}
 				else
 				{
-					SOUND_MenuItem.setCurrentTileIndex(0);
-					GameActivity.sound = true;
-					ResourcesManager.getInstance().music_game.play();
-					ResourcesManager.getInstance().music_menu.play();
+					try 
+					{
+						resourcesManager.write(GameScene.GLOBAL_SON, "true");
+						GameActivity.sound = true;
+						SOUND_MenuItem.setCurrentTileIndex(0);
+						ResourcesManager.getInstance().music_game.play();
+						ResourcesManager.getInstance().music_menu.play();
+					} 
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 				return true;
 			default:
